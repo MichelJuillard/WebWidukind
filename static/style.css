@@ -1,0 +1,25 @@
+<script type='text/css'>
+.accord ul, .accord ul li {
+	list-style-type: none;
+}
+
+.accord ul li a {
+	color: #6E440A;
+	text-decoration: none;
+}
+
+.accord ul li a:hover {
+	color: #523205;
+	text-decoration: underline;
+}
+
+.accord ul li span {
+	color: red;
+	margin-right: 0.5%;
+	cursor: pointer;	
+}
+
+.pl-20 {
+	padding-left: 3%;
+}
+</script>
