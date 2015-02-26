@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, redirect, session
 import pymongo
 from elasticsearch import Elasticsearch
+import os
 
 app = Flask(__name__)
-
-app.secret_key = 'testing'
+#app.debug = True
+app.config['SECRET_KEY'] = 'very very secret key key key'
+#app.secret_key = os.urandom(24)
 
 def elasticsearch_query(query):
     es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', size=20, body={"query": {"query_string": {"query": query}}})
+    print(res)
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
@@ -46,5 +49,5 @@ def disp_results():
 
 
 if __name__ == '__main__':
-    app.debug = True
+ #   app.debug = True
     app.run()

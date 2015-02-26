@@ -27,8 +27,8 @@
 
   #banner
   {
-    width:500px;
-    height:50px;
+    width:60%;
+    height:20%;
     text-align:center;
     background-repeat:no-repeat;
     border-radius:5px;
@@ -38,7 +38,7 @@
 
   #facets1
   {
-    width:300px;
+    width:15%;
     height:200px;
     text-align:left;
     background-repeat:no-repeat;
@@ -51,7 +51,7 @@
 
   #middle
   {
-    width:1280px;
+    width:70%;
     height:300px;
     text-align:center;
     background-repeat:no-repeat;
@@ -63,7 +63,7 @@
 
   #center
   {
-  width:1280px;
+  width:70%;
   height:20px;
   text-align:center;
   background-repeat:no-repeat;
@@ -74,7 +74,7 @@
   }
   #searchform
   {
-  width:1280px;
+  width:70%;
   height:30px;
   text-align:center;
   background-repeat:no-repeat;
@@ -86,7 +86,7 @@
      
   #results
   {
-  width:1280px;
+  width:70%;
   height:100px;
   text-align:center;
   background-repeat:no-repeat;
@@ -98,7 +98,7 @@
 
   #facets2
   {
-  width:300px;
+  width:15%;
   height:200px;
   text-align:left;
   background-repeat:no-repeat;
@@ -147,10 +147,10 @@
     <div id="searchform">
       <form action="/search" method="post">
 	{% if not session.query %}
-	<input type="text" name="query" size="100"></input>
+	<input type="text" name="query" style="width:90%"></input>
 	{% else %}
 	<input type="text" name="query"
-	       value="{{ session.query }}" size="100"></input>
+	       value="{{ session.query }}" style="width:90%"></input>
 	{% endif %}  
 	<input type="submit" value="Go"></input>
       </form>
