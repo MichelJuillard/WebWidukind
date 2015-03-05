@@ -145,7 +145,7 @@
   <div id=center>
 
     <div id="searchform">
-      <form action="/search" method="post">
+      <form action="/search_datasets" method="post">
 	{% if not session.query %}
 	<input type="text" name="query" style="width:90%"></input>
 	{% else %}
@@ -157,14 +157,16 @@
     </div>
     <div id="results">
       {% if session.results %}
-      <table>
-	{% for r in session.results %}
-	<tr>
-	  <th> {{ r['datasetCode'] }} </th>
-	  <td> {{ r['name'] }} </td>
-	</tr>
-	{% endfor %}
-      </table>
+      <form action="/search_series" method="post">
+	<table>
+	  {% for r in session.results %}
+	  <tr>
+	    <th> {{ r['datasetCode'] }} </th>
+	    <td> {{ r['name'] }} </td>
+	  </tr>
+	  {% endfor %}
+	</table>
+      </form>
       {% endif %}
     </div>
   </div>
