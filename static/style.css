@@ -88,24 +88,24 @@ h1
 }
 #searchform
 {
-    width:70%;
+    width:98%;
     height:30px;
     text-align:center;
     background-repeat:no-repeat;
     border-radius:5px;
-    margin:90px auto auto;
+    margin:10px auto auto;
     padding:5px 0;
     background-color:#999;
 }
 
 #results
 {
-    width:70%;
-    height:100px;
-    text-align:center;
+    width:98%;
+    height:2000%;
+    text-align:left;
     background-repeat:no-repeat;
     border-radius:5px;
-    margin:90px auto auto;
+    margin:20px auto auto;
     padding:80px 0;
     background-color:#999;
 }

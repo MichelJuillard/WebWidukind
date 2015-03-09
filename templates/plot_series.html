@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Widukind search</title>	
+
+<!--	<link href='http://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
+-->
+	<script type="text/javascript"  src="static/dygraph-combined.js"></script>
+</head>  
+
+<body>
+  <h1>{{session.name}}</h1>
+  <div id="graphdiv" style="width:90%;"></div>
+
+  <script type="text/javascript">
+  g = new Dygraph(
+
+  // containing div
+  document.getElementById("graphdiv"),
+  
+  // CSV or path to a CSV file.
+  "Date,{{session.name}}" +
+  {% for v in session.elements -%}
+  "{{v[0]}},{{v[1]}}\n" {{v[2]}}
+  {% endfor %}
+  );
+</script>
+</body>
+</html>

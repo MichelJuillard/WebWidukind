@@ -6,118 +6,7 @@
 
 <!--	<link href='http://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
 -->
-	<link type='text/css' href='../static/style.css' rel='stylesheet'>
-	      
-	<style type="text/css">    
-  body
-  {
-    background-color:#011;
-  }
-
-  h1
-  {
-    font-size:48px;
-    margin-top:0;
-    font-family:Arial, sans-serif;
-    text-shadow:2px 0 15px #292929;
-    letter-spacing:4px;
-    text-decoration:none;
-    color:#DDD;
-  }
-
-  #banner
-  {
-    width:60%;
-    height:20%;
-    text-align:center;
-    background-repeat:no-repeat;
-    border-radius:5px;
-    margin:30px auto auto;
-    padding:40px 0;
-  }
-
-  #facets1
-  {
-    width:15%;
-    height:200px;
-    text-align:left;
-    background-repeat:no-repeat;
-    border-radius:5px;
-    margin:90px auto auto;
-    padding:80px 0;
-    float:left;
-    background-color:#770;
-  }
-
-  #middle
-  {
-    width:70%;
-    height:300px;
-    text-align:center;
-    background-repeat:no-repeat;
-    border-radius:5px;
-    margin:90px auto auto;
-    padding:80px 0;
-    float:left;
-  }
-
-  #center
-  {
-  width:70%;
-  height:20px;
-  text-align:center;
-  background-repeat:no-repeat;
-  border-radius:5px;
-  margin:10px auto auto;
-  padding:10px 0;
-  display: inline-block
-  }
-  #searchform
-  {
-  width:70%;
-  height:30px;
-  text-align:center;
-  background-repeat:no-repeat;
-  border-radius:5px;
-  margin:90px auto auto;
-  padding:5px 0;
-  background-color:#999;
-  }
-     
-  #results
-  {
-  width:70%;
-  height:100px;
-  text-align:center;
-  background-repeat:no-repeat;
-  border-radius:5px;
-  margin:90px auto auto;
-  padding:80px 0;
-  background-color:#999;
-  }
-
-  #facets2
-  {
-  width:15%;
-  height:200px;
-  text-align:left;
-  background-repeat:no-repeat;
-  border-radius:5px;
-  margin:90px auto auto;
-  padding:80px 0;
-  float:right;
-  background-color:#020;
-  }
-
-  .lead
-  {
-  background-color:rgba(255,255,255,0.6);
-  border-radius:3px;
-  box-shadow:rgba(0,0,0,0.2) 0 1px 3px;
-  font-family:Sintony, sans-serif;
-  }
-	</style>
-
+	<link type='text/css' href='static/style.css' rel='stylesheet'>
 </head>  
 
 <body>
@@ -145,7 +34,7 @@
   <div id=center>
 
     <div id="searchform">
-      <form action="/search_datasets" method="post">
+      <form action="/search_series" method="post">
 	{% if not session.query %}
 	<input type="text" name="query" style="width:90%"></input>
 	{% else %}
@@ -157,16 +46,24 @@
     </div>
     <div id="results">
       {% if session.results %}
-      <form action="/search_series" method="post">
 	<table>
 	  {% for r in session.results %}
 	  <tr>
-	    <th> {{ r['datasetCode'] }} </th>
+	    <th> {{ r['key'] }} </th>
 	    <td> {{ r['name'] }} </td>
+	    <td> <a href="/print_series?{{r['key']}}"
+		    target="_blank">
+		<button type="button">P</button></a></td>
+	    <td> <a href="/plot_series?{{r['key']}}"
+		    target="_blank">
+		<button type="button">G</button></a></td>
+	    <td> <form method="POST"
+		       action="/download_series?{{r['key']}}">
+		<button type="submit">D</button>
+		</form>
 	  </tr>
 	  {% endfor %}
 	</table>
-      </form>
       {% endif %}
     </div>
   </div>
