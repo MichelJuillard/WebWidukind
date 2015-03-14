@@ -38,8 +38,8 @@ def elasticsearch_query_series(query):
 
 @app.route('/')
 def initial_page():
-    return render_template('search_series.html')
-#    return render_template('search_datasets.html')
+#    return render_template('search_series.html')
+    return render_template('search_datasets.html')
 
 @app.route('/facet1', methods = ['POST'])
 def facet1():
@@ -49,17 +49,35 @@ def facet1():
     print(req)
     return redirect('/')
 
-@app.route('/search_datasets', methods = ['POST'])
+@app.route('/search_datasets', methods = ['GET','POST'])
 def search_datasets():
-    query = request.form['query']
+    if 'query' in request.form:
+        query = request.form['query']
+    else:
+        query = ''
+    print(query)
     results = elasticsearch_query_datasets(query)
+    print(results)
     session['query'] = query
     session['results'] = results
     return render_template('search_datasets.html')
 
-@app.route('/search_series', methods = ['POST'])
-def search_series():
+@app.route('/search_series_in_datasets', methods = ['GET','POST'])
+def search_series_in_datasets():
     query = request.form['query']
+    dataset = query['name']
+    results = elasticsearch_query_series(query)
+    print(results)
+    session['query'] = query
+    session['results'] = results
+    return render_template('search_series_in_dataset.html')
+
+@app.route('/search_series', methods = ['GET','POST'])
+def search_series():
+    if 'query' in request.form:
+        query = request.form['query']
+    else:
+        query = ''
     results = elasticsearch_query_series(query)
     session['query'] = query
     session['results'] = results

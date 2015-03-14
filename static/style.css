@@ -26,6 +26,7 @@
 body
 {
     background-color:#011;
+    height: 100%;
 }
 
 h1
@@ -41,7 +42,7 @@ h1
 
 #banner
 {
-    width:60%;
+    width:70%;
     height:20%;
     text-align:center;
     background-repeat:no-repeat;
@@ -50,17 +51,88 @@ h1
     padding:40px 0;
 }
 
-#facets1
+#main-outer
 {
-    width:15%;
-    height:200px;
-    text-align:left;
-    background-repeat:no-repeat;
-    border-radius:5px;
-    margin:90px auto auto;
-    padding:80px 0;
-    float:left;
+    position: relative;
+    overflow: hidden;
+    width:100%;
+}
+
+#main-inner-1
+{
+    float: left;
+    overflow: hidden;
+    width:100%;
+    position: relative;
     background-color:#770;
+}
+    
+#main-inner-2
+{
+    float: left;
+    width:100%;
+    position: relative;
+    left: 15%;
+    background-color:#999;
+}
+    
+#main-inner-3
+{
+    float: left;
+    width:100%;
+    position: relative;
+    left: 70%;
+    background-color:#770;
+}
+    
+#facets1-2
+{
+    float: left;
+    position: relative;
+    width: 15%;
+    height: auto;
+    right: 15%;
+    text-align:left;
+}
+
+#results-2
+{
+    float:left;
+    position: relative;
+    width: 85%;
+    height: auto;
+    right: 15%;
+    text-align:left;
+}
+
+#facets1-3
+{
+    float: left;
+    position: relative;
+    width: 15%;
+    height: auto;
+    right: 85%;
+    text-align:left;
+}
+
+#results-3
+{
+    float:left;
+    position: relative;
+    width: 85%;
+    height: auto;
+    right: 85%;
+    text-align:left;
+}
+
+#facets2-3
+{
+    float:left,
+    position: relative;
+    width:15%;
+    height: auto;
+    right: 85%;
+    text-align:left;
 }
 
 #middle
@@ -80,7 +152,6 @@ h1
     width:70%;
     height:20px;
     text-align:center;
-    background-repeat:no-repeat;
     border-radius:5px;
     margin:10px auto auto;
     padding:10px 0;
@@ -88,47 +159,29 @@ h1
 }
 #searchform
 {
-    width:98%;
+    width:100%;
     height:30px;
     text-align:center;
     background-repeat:no-repeat;
     border-radius:5px;
     margin:10px auto auto;
-    padding:5px 0;
+    padding:5px 5px;
     background-color:#999;
-}
-
-#results
-{
-    width:98%;
-    height:2000%;
-    text-align:left;
-    background-repeat:no-repeat;
-    border-radius:5px;
-    margin:20px auto auto;
-    padding:80px 0;
-    background-color:#999;
-}
-
-#facets2
-{
-    width:15%;
-    height:200px;
-    text-align:left;
-    background-repeat:no-repeat;
-    border-radius:5px;
-    margin:90px auto auto;
-    padding:80px 0;
-    float:right;
-    background-color:#020;
 }
 
 .lead
 {
+    text-align: center;
     background-color:rgba(255,255,255,0.6);
     border-radius:3px;
     box-shadow:rgba(0,0,0,0.2) 0 1px 3px;
     font-family:Sintony, sans-serif;
 }
 
+#menu ul li
+{
+    display: inline;
+    background: #999;
+}
+		 
 </script>
