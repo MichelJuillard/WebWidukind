@@ -22,59 +22,65 @@
 	  </ul>
 	</nav>
       </div>
+      <p class="lead">Dateset: {{ session.datasetCode }}
+      {{ session.datasetName }}</p>
 
       <div id="searchform">
-	<form action="/search_datasets" method="post">
+	<form action="/search_series_in_dataset" method="post">
 	  {% if not session.query %}
 	  <input type="text" name="query" style="width:90%"></input>
 	  {% else %}
 	  <input type="text" name="query"
 		 value="{{ session.query }}" style="width:90%"></input>
-	  {% endif %}  
+	  {% endif %}
+	  <input type="hidden" name="datasetCode" value="{{session.datasetCode}}">
 	  <input type="submit" value="Go"></input>
 	</form>
       </div>
     </div>
 
-    <div id="main-outer">
-      <div id="main-inner-1">
+      <div id="main-inner-3">
 	<div id="main-inner-2">
+	  <div id="main-inner-1">
 
-	  <div id="facets1-2">
-	    {% include 'facet1.html' %}
-	  </div>
+	    <div id="facets1-3">
+	      {% include 'facet1.html' %}
+	    </div>
 
-	  <div id="results-2">
-	    {% if session.results %}
+	    <div id="results-3">
+	      {% if session.results %}
 	      <table>
 		{% for r in session.results %}
 		<tr>
-		  <th> {{ r['datasetCode'] }} </th>
-		  <td>
-		    <form action="/search_series_in_dataset"
-			  method="post">
-		      <input type="hidden" name="datasetCode"
-			     value="{{ r['datasetCode'] }}">
-		      <input type="submit" value="{{ r['name'] }}">
+		  <th> {{ r['key'] }} </th>
+		  <td> {{ r['name'] }} </td>
+		  <td> <a target="popup" onclick="window.open('/print_series?{{r['key']}}','{{r['key']}}','width=600,height=auto')">
+		      <button type="button">P</button></a></td>
+		  <td> <a  target="popup" onclick="window.open('/plot_series?{{r['key']}}','{{r['key']}}','width=600,height=auto')">
+		      <button type="button">G</button></a></td>
+		  <td> <form method="POST"
+			     action="/download_series?{{r['key']}}">
+		      <button type="submit">D</button>
 		    </form>
-		  </td>
 		</tr>
 		{% endfor %}
 	      </table>
-	    {% endif %}
+	      {% endif %}
+	    </div>
+	    
+	    <div id="facets2-3">
+	      {% include 'facet2.html' %}
+	    </div>
 	  </div>
-
-	  <div id="facets2"></div>
 	</div>
       </div>
-    </div>
     <script language="javascript" type="text/javascript" src="../static/jquery-2.1.3.min.js"></script>
-
+    
     <script type="text/javascript">
       jQuery(document).ready(function ($) {
       $('.accord ul li:has(ul)').addClass('expand').find('ul').hide();
       $('.accord ul li.expand>a').before('<span>[ + ]</span>');
-
+      
       $('.accord ul').on('click', 'li.collapse span ', function (e) {
       $(this).text('[ + ]').parent().addClass('expand').removeClass('collapse').find('>ul').slideUp();
       e.stopImmediatePropagation();

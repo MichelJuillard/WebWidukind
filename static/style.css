@@ -54,16 +54,15 @@ h1
 #main-outer
 {
     position: relative;
-    overflow: hidden;
     width:100%;
 }
 
-#main-inner-1
+#main-inner-3
 {
     float: left;
+    position: relative;
     overflow: hidden;
     width:100%;
-    position: relative;
     background-color:#770;
 }
     
@@ -72,16 +71,16 @@ h1
     float: left;
     width:100%;
     position: relative;
-    left: 15%;
+    right: 15%;
     background-color:#999;
 }
     
-#main-inner-3
+#main-inner-1
 {
     float: left;
     width:100%;
     position: relative;
-    left: 70%;
+    right: 70%;
     background-color:#770;
 }
     
@@ -89,50 +88,50 @@ h1
 {
     float: left;
     position: relative;
-    width: 15%;
-    height: auto;
-    right: 15%;
+    width: 11%;
+    left: 17%;
     text-align:left;
+    overflow: hidden;
 }
 
 #results-2
 {
     float:left;
     position: relative;
-    width: 85%;
-    height: auto;
-    right: 15%;
+    width: 81%;
+    left: 17%;
     text-align:left;
+    overflow: hidden;
 }
 
 #facets1-3
 {
     float: left;
     position: relative;
-    width: 15%;
-    height: auto;
-    right: 85%;
+    width: 11%;
+    left: 87%;
     text-align:left;
+    overflow: hidden;
 }
 
 #results-3
 {
     float:left;
     position: relative;
-    width: 85%;
-    height: auto;
-    right: 85%;
+    width: 68%;
+    left: 90%;
     text-align:left;
+    overflow: hidden;
 }
 
 #facets2-3
 {
-    float:left,
+    float:left;
     position: relative;
-    width:15%;
-    height: auto;
-    right: 85%;
+    width:11%;
+    left: 91%;
     text-align:left;
+    overflow: hidden;
 }
 
 #middle
