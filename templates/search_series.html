@@ -36,37 +36,39 @@
       </div>
     </div>
     
-    <div id="main-outer">
-      <div id="main-inner-1">
+      <div id="main-inner-3">
 	<div id="main-inner-2">
-	  <div id="facets1-2">
-	    {% include 'facet1.html' %}
-	  </div>
-	  
-	  <div id="results-2">
-	    {% if session.results %}
-	    <table>
-	      {% for r in session.results %}
-	      <tr>
-		<td><b> {{ r['key'] }}</b> </td>
-	      </tr>
-	      <tr>
-		<td> {{ r['name'] }} </td>
-		<td> <a target="popup" onclick="window.open('/print_series?{{r['key']}}','{{r['key']}}','width=600,height=auto')">
-		    <button type="button">P</button></a></td>
-		<td> <a  target="popup" onclick="window.open('/plot_series?{{r['key']}}','{{r['key']}}','width=600,height=auto')">
-		    <button type="button">G</button></a></td>
-		<td> <form method="POST"
-			   action="/download_series?{{r['key']}}">
-		    <button type="submit">D</button>
-		  </form>
-	      </tr>
-	      {% endfor %}
-	    </table>
-	    {% endif %}
+	  <div id="main-inner-1">
+	    <div id="facets1-3">
+	      {% include 'facet1.html' %}
+	    </div>
+	    
+	    <div id="results-3">
+	      {% if session.results %}
+	      <table>
+		{% for r in session.results %}
+		<tr>
+		  <td><b> {{ r['key'] }}</b> </td>
+		</tr>
+		<tr>
+		  <td> {{ r['name'] }} </td>
+		  <td> <a target="popup" onclick="window.open('/print_series?{{r['key']}}','{{r['key']}}','width=600,height=auto')">
+		      <button type="button">P</button></a></td>
+		  <td> <a  target="popup" onclick="window.open('/plot_series?{{r['key']}}','{{r['key']}}','width=600,height=auto')">
+		      <button type="button">G</button></a></td>
+		  <td> <form method="POST"
+			     action="/download_series?{{r['key']}}">
+		      <button type="submit">D</button>
+		    </form>
+		  </td>
+		</tr>
+		{% endfor %}
+	      </table>
+	      {% endif %}
+	    </div>
+	    <div id="facets2-3">xxx</div>
 	  </div>
 	</div>
-      </div>
       <script language="javascript" type="text/javascript" src="../static/jquery-2.1.3.min.js"></script>
 
     <script type="text/javascript">

@@ -70,6 +70,7 @@ h1
 {
     float: left;
     width:100%;
+    overflow: hidden;
     position: relative;
     right: 15%;
     background-color:#999;
@@ -79,6 +80,7 @@ h1
 {
     float: left;
     width:100%;
+    overflow: hidden;
     position: relative;
     right: 70%;
     background-color:#770;
@@ -119,7 +121,7 @@ h1
     float:left;
     position: relative;
     width: 68%;
-    left: 90%;
+    left: 100%;
     text-align:left;
     overflow: hidden;
 }
