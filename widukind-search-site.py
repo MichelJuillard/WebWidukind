@@ -69,7 +69,7 @@ def form_es_query(query,filter):
 @app.route('/')
 def initial_page():
 #    return render_template('search_series.html')
-    return render_template('search_datasets.html')
+    return render_template('search.html')
 
 @app.route('/facet1', methods = ['POST'])
 def facet1():
