@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, make_response
+from flask import Flask, render_template, request, redirect, session, make_response, abort, send_from_directory
 from dlstats import configuration
 import pymongo
 from elasticsearch import Elasticsearch
@@ -6,19 +6,115 @@ import os
 import pandas
 import io
 import csv
+from bson.json_util import dumps
+from collections import OrderedDict
+import datetime
 
 app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'very very secret key key key'
 #app.secret_key = os.urandom(24)
 
-def elasticsearch_query_datasets(query,filter={}):
+@app.route('/facefiles/<file>')
+def facefiles(file):
+    return send_from_directory('facefiles',file)
+
+@app.route('/dataset_facets', methods = ['GET', 'POST'])
+def dataset_facets():
+    provider = request.args.get('provider')
+    code = request.args.get('code')
+    filter = {'provider': provider, 'datasetCode': code}
+    es = Elasticsearch(host = "localhost")
+    res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
+    s  = res['hits']['hits'][0]["_source"]
+    return dumps(s['codeList'])
+
+@app.route('/provider_facets', methods = ['GET', 'POST'])
+def provider_facets():
+    mb = pymongo.MongoClient(**configuration['MongoDB'])
+    providers = mb.widukind.providers.find()
+    results = []
+    for p in providers:
+        results.append({'id': p['name'], 'selected': False, 'url': p['website']})
+    return dumps(results)
+
+@app.route('/REST_datasets', methods = ['POST'])
+def REST_datasets():
+    if not request.json:
+        abort(400)
+    if 'query' in request.json and request.json['query'] is not None:
+        query = request.json['query']
+    else:
+        query = {}
+    filter = {}    
+    if 'filter' in request.json and request.json['filter'] is not None:
+        filter0 = request.json['filter']
+        for f in filter0:
+            if len(filter0[f]) > 0:
+                filter[f] = filter0[f]
+    else:
+        filter = {}
+    results = elasticsearch_query_datasets(query,filter)
+    return dumps(results)
+
+@app.route('/REST_series', methods = ['POST'])
+def REST_series():
+    if not request.json:
+        abort(400)
+    if 'query' in request.json and request.json['query'] is not None:
+        query = request.json['query']
+    else:
+        query = {}
+    filter = {}    
+    if 'filter' in request.json and request.json['filter'] is not None:
+        filter0 = request.json['filter']
+        for f in filter0:
+            if len(filter0[f]) > 0:
+                filter[f] = filter0[f]
+    else:
+        filter = {}
+    results = elasticsearch_query_series(query,filter)
+    print(results)
+    return dumps(results)
+
+@app.route('/dataset_info', methods = ['GET', 'POST'])
+def dataset_info():
+    code = request.args.get('code')
+    filter = {'datasetCode': code}
+    es = Elasticsearch(host = "localhost")
+    res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
+    s  = res['hits']['hits'][0]["_source"]
+    print(s)
+    html =  "<div><table>" 
+    html += "<tr><th>Name:</th><td>"+s['name']+"</td></tr>" 
+    html += "<tr><th>Code:</th><td>"+code+"</td></tr>" 
+    if (s['docHref'] is not None):
+        html += '<tr><th>Provider doc:</th><td><a href="'+s['docHref']+'" target="popup">Web</a></td></tr>' 
+    html += "<tr><th>Last update:</th><td>"+str(s['lastUpdate'])+"</td></tr>" 
+    html += "<tr><th>Dimensions</th></tr>";
+    c = s['codeList']
+    cc = OrderedDict(sorted(c.items(), key = lambda t: t[0].lower()))
+    s['codeList'] = cc
+    for k in cc:
+        html += "<tr><th></th><th>"+k+"</th></tr>"
+        print(cc[k])
+        for kk in cc[k]:
+            if type(kk) is str:
+                html += "<tr><th></th><td>"+kk+"</td>"
+            else:
+                html += "<tr><th></th><td>"+kk[0]+"</td>"
+                html += "<td>"+kk[1]+"</td>"
+            html += "</tr>"
+    html += "</table></div>"
+    return html
+
+def elasticsearch_query_datasets(query={},filter={}):
     es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query(query,filter))
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
-        results.append({"datasetCode": s["datasetCode"], "name": s["name"]})
+        results.append({"datasetCode": s["datasetCode"], "name": s["name"], "provider": s["provider"]})
     return results
 
 def elasticsearch_get_dataset(datasetCode):
@@ -34,17 +130,53 @@ def mongodb_series_by_key(key):
     series = mb.widukind.series.find_one({'key': key},{'revisions': 0})
     return series
     
+def mongodb_series_by_filter(filter):
+    mb = pymongo.MongoClient(**configuration['MongoDB'])
+    res = mb.widukind.series.find(filter,{'revisions': 0, 'releaseDates': 0})
+    return res
+    
+def mongodb_dataset_by_code(code):
+    mb = pymongo.MongoClient(**configuration['MongoDB'])
+    series = mb.widukind.series.find_one({'datasetCode': code})
+    return series
+    
 def elasticsearch_query_series(query,filter={}):
     es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'series', size=20, body=form_es_query(query,filter))
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
-        results.append({"key": s["key"], "name": s["name"]})
+        results.append({"key": s["key"], "name": s["name"], "provider": s["provider"]})
     return results
 
 def form_es_query(query,filter):
-    if len(filter):
+    print(query,filter)
+    if filter is not None and len(filter):
+        filter1 = {}
+        filter2 = {}
+        for f in filter:
+            if type(filter[f]) is str:
+                filter1[f] = filter[f]
+            elif type(filter[f]) is list:
+                filter2[f] = filter[f]
+            elif type(filter[f]) is dict:
+                for f1 in filter[f]:
+                    if type(filter[f][f1]) is str:
+                        filter1[f+'.'+f1] = filter[f][f1]
+                    elif type(filter[f][f1]) is list:
+                        filter2[f+'.'+f1] = filter[f][f1]
+        print('filter1',filter1)
+        print('filter2',filter2)
+        f = []
+        for k,v in filter1.items():
+            f.extend([{'term': {k:v}}])
+        for k,v in filter2.items():
+            f.extend([{'terms': {k:v}}])
+        print('f',f)
+        if len(f) > 1:
+            filters = {'bool': {'must': f}}
+        elif len(f) == 1:
+            filters = f[0]
         if len(query):
             es_query = {
                 'query': {
@@ -54,16 +186,15 @@ def form_es_query(query,filter):
                                 'query': query
                             }
                         },
-                        'filter': {
-                            'term': filter
-                        }
+                        'filter': filters
                     }
                 }
             }
         else:
-            es_query = {"filter": {"term": filter}}
+            es_query = {"filter": filters}
     else:
         es_query = {"query": {"query_string": {"query": query}}}
+    print(es_query)
     return es_query
 
 @app.route('/')
@@ -111,50 +242,65 @@ def search_series_in_dataset():
     session['dataset'] = dataset
     return render_template('search_series_in_dataset.html')
 
-@app.route('/search_series', methods = ['GET','POST'])
+@app.route('/search_series', methods = ['POST'])
 def search_series():
-    if 'query' in request.form:
-        query = request.form['query']
-    else:
-        query = ''
-    results = elasticsearch_query_series(query)
-    session['query'] = query
-    session['results'] = results
-    return render_template('search_series.html')
+    if not request.json:
+        abort(400)
+    if 'query' not in request.json:
+        query = {}
+    if 'filter' not in request.json:
+        filter = {}
+    results = elasticsearch_query_series(query,filter)
+    return dump
 
 @app.route('/print_series', methods = ['GET', 'POST'])
 def print_series():
-    key = next(request.args.lists())[0]
+    key = request.args.get('key')
     series = mongodb_series_by_key(key)
-    session['name'] = series['name']
-    session['key'] = series['key']
-    session['dimensions'] = series['dimensions']
+    print(key,series)
     sd = pandas.Period(series['startDate'],freq=series['frequency'])
-    values = []
+    html =  "<div><table>" 
+    html += "<tr><th>Name:</th><td>"+series['name']+"</td></tr>" 
+    html += "<tr><th>Key:</th><td>"+key+"</td></tr>" 
+    html += "<tr><th>Dimensions</th></tr>"
+    for d in series['dimensions']:
+        html += "<tr><td></td><th>"+d+"</th><td>"+series['dimensions'][d]+"</td></tr>"
     for val in series['values']:
-        values.append([str(sd), val])
+        html += "<tr><th>"+str(sd)+"</th><td>"+val+"</td></tr>"
         sd += 1
-    session['elements'] = values
-    return render_template('print_series.html')
+    html += "</table></div>"
+    return html
 
 @app.route('/plot_series', methods = ['GET', 'POST'])
 def plot_series():
-    key = next(request.args.lists())[0]
+    key = request.args.get('key')
     series = mongodb_series_by_key(key)
-    session['name'] = series['name']
-    session['key'] = series['key']
     sd = pandas.Period(series['startDate'],freq=series['frequency'])
-    values = []
+    html = """<!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>Widukind search</title>	
+    <script type="text/javascript"  src="static/dygraph-combined.js"></script>
+    </head>  
+    <body>"""
+    html += "<h1>"+series['name']+"</h1>"
+    html += '<div id="graphdiv" style="width:90%;"></div>'
+    html += '<script type="text/javascript">'
+    html += 'g = new Dygraph('
+    html += 'document.getElementById("graphdiv"),\n'
+    html += '"Date,'+series['name']+'\\n" +\n'
     for val in series['values'][:-1]:
-        values.append([sd.to_timestamp(), val, '+'])
+        html += '"'+str(sd.to_timestamp())+", " + val + '\\n" +\n'
         sd += 1
-    values.append([sd.to_timestamp(), val, ''])
-    session['elements'] = values
-    return render_template('plot_series.html')
+    html += '"'+str(sd.to_timestamp())+", " + series['values'][-1] + '\\n"'
+    html += ");</script></body></html>"
+    print(html)
+    return html
 
 @app.route('/download_series', methods = ['GET', 'POST'])
 def download_series():
-    key = next(request.args.lists())[0]
+    key = request.args.get('key')
     series = mongodb_series_by_key(key)
     sd = pandas.Period(series['startDate'],freq=series['frequency'])
     values = []
@@ -170,6 +316,121 @@ def download_series():
     
     return response
 
+@app.route('/download_dataset', methods = ['GET', 'POST'])
+def download_dataset():
+    data = request.args
+    filter = {}
+    for d in data:
+        if d[-2:] == '[]':
+            d1 = d[:-2]
+            filter[d1] = {'$in': data.getlist(d)}
+        else:
+            filter[d] = data[d]
+    print(filter)
+    dataset = mongodb_dataset_by_code(filter['datasetCode'])
+    series = mongodb_series_by_filter(filter)
+    print(filter,series.count())
+    ck = list(dataset['dimensions'].keys())
+    cl = sorted(ck, key = lambda t: t.lower())
+    headers = ['key']+cl
+    dmin = datetime.datetime(3000,1,1)
+    dmax = datetime.datetime(1,1,1)
+    for s in series:
+        if s['startDate'] < dmin:
+            dmin = s['startDate']
+        if s['endDate'] > dmax:
+            dmax = s['endDate']
+        freq = s['frequency']
+    pStartDate = pandas.Period(s['startDate'],freq=freq)
+    pEndDate = pandas.Period(s['endDate'],freq=freq)
+    pDmin = pandas.Period(dmin,freq=freq);
+    pDmax = pandas.Period(dmax,freq=freq);
+    headers += pandas.period_range(pStartDate,pEndDate,freq=freq).to_native_types()
+    elements = [headers]
+    series.rewind()
+    for s in series:
+        row = [s['key']]
+        for c in cl:
+            if c in s['dimensions']:
+                row.append(s['dimensions'][c])
+            else:
+                row.append('')
+        for d in pandas.period_range(pDmin,pStartDate-1,freq=freq):
+            row.append(None)
+        for val in s['values']:
+            row.append(val)
+        elements.append(row)
+    csv_output = io.StringIO()
+    writer = csv.writer(csv_output, quoting=csv.QUOTE_NONNUMERIC)
+    writer.writerows(elements)
+
+    response = make_response(csv_output.getvalue())
+    response.headers["Content-disposition"] = "attachment; filename="+filter['datasetCode']+".csv"
+
+    print(csv_output.getvalue())
+    
+    return response
+
+@app.route('/EVIEWS/<provider>/dataset/<dataset_code>/values', methods = ['GET', 'POST'])
+def EVIEWS_query_series(provider,dataset_code):
+    query = {}
+    query['provider'] = provider;
+    query['datasetCode'] = str(dataset_code);
+    for r in request.args.lists():
+        if r[0] == 'frequency':
+            query['frequency'] = r[1][0]
+        else:
+            query['dimensions.'+r[0]] = {'$regex': r[1][0]}
+    results = mongodb_series_by_filter(query)
+    table = {}
+    table['vnames'] = []
+    table['desc'] = []
+    table['dates'] = []
+    table['values'] = []
+    init = True
+    
+    for r in results:
+        if init:
+            freq = r['frequency']
+            dmin = r['startDate']
+            dmax = r['endDate']
+            pStartDate = pandas.Period(r['startDate'],freq=freq)
+            pEndDate = pandas.Period(r['endDate'],freq=freq)
+            pDmin = pandas.Period(dmin,freq=freq);
+            pDmax = pandas.Period(dmax,freq=freq);
+            table['dates'] = pandas.period_range(pStartDate,pEndDate,freq=freq).to_native_types()
+            init = False
+        print(r['key'])
+        if r['frequency'] != freq:
+            continue
+        if r['startDate'] < dmin:
+            dmin = r['startDate']
+        if r['endDate'] > dmax:
+            dmax = r['endDate']
+        print(r['key'])
+        table['vnames'].append(r['key'])
+        table['desc'].append(r['name'])
+        table['values'].append(r['values'])
+    string = "<table>\n"
+    string += "<tr><th>Dates</th>"
+    for v in table['vnames']:
+        string += "<th>" + v + "</th>"
+    string += "</tr>\n"
+    string += "<tr><th></th>" 
+    for d in table['desc']:
+        string += "<th>" + d + "</th>"
+    string += "</tr>\n"
+    for index,p in enumerate(table['dates']):
+        string += "<tr><td>" + p + "</td>"
+        for v in table['values']:
+            string += "<td>" + v[index] + "</td>"
+        string += "</tr>\n"
+    string += "</table>\n"
+    
+    return(string)
+    
+    
+        
 if __name__ == '__main__':
     app.debug = True
     app.run()

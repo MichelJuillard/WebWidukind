@@ -25,7 +25,7 @@
 
 body
 {
-    background-color:#011;
+    background-color:#999;
     height: 100%;
 }
 
@@ -91,7 +91,7 @@ h1
     float: left;
     position: relative;
     width: 11%;
-    left: 17%;
+    left: 87%;
     text-align:left;
     overflow: hidden;
 }
@@ -100,8 +100,8 @@ h1
 {
     float:left;
     position: relative;
-    width: 81%;
-    left: 17%;
+    width: 84%;
+    left: 90%;
     text-align:left;
     overflow: hidden;
 }
@@ -143,11 +143,15 @@ input[type=text]{
     padding: 13px 12px;
     font-size: 15px;
     box-shadow: 0 1px 1px #DDD;
-    width: 68%;
+    width: 90%;
     outline: none;
-    display: block;
+    display: inline-block;
     color: #7B8585;
     margin: 0 auto 20px;
+}
+
+#results-table{
+    text-align: center;
 }
 
 #middle
@@ -181,6 +185,7 @@ input[type=text]{
     margin:10px auto auto;
     padding:5px 5px;
     background-color:#999;
+    display: inline-block;
 }
 
 .lead
@@ -192,6 +197,13 @@ input[type=text]{
     font-family:Sintony, sans-serif;
 }
 
+.lead form{
+    display: inline-block;
+}
+
+.lead input{
+    display: inline-block;
+}
 
 #menu ul{
     list-style:none;
@@ -217,5 +229,8 @@ input[type=text]{
     background-color:#41c7c2;
 }
 
-		 
+#facebox .body {
+    width: 1800pt !important;
+}
+
 </script>

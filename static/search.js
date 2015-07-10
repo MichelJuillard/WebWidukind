@@ -1,4 +1,4 @@
-var LeftFacets = React.createClass({
+var LeftFacets = React.createClass({displayName: "LeftFacets",
     getInitialState: function() {
 	return { data: [] };
     },
@@ -34,26 +34,26 @@ var LeftFacets = React.createClass({
     render: function() {
         var checks = this.state.data.map(function(d) {
             return (
-		<div key={d.id} >
-                    <input type="checkbox"  checked={d.selected} onChange={this.__changeSelection.bind(this, d.id)} />
-		    {d.id}
-		<br/>
-		    </div>
+		React.createElement("div", {key: d.id}, 
+                    React.createElement("input", {type: "checkbox", checked: d.selected, onChange: this.__changeSelection.bind(this, d.id)}), 
+		    d.id, 
+		React.createElement("br", null)
+		    )
             );
         }.bind(this));
 
         return (
-		<div>
-		<h2>Providers</h2>
-		<form>
-                {checks}
-            </form>
-		</div>
+		React.createElement("div", null, 
+		React.createElement("h2", null, "Providers"), 
+		React.createElement("form", null, 
+                checks
+            )
+		)
         );
     },
 });
 
-var Dimension = React.createClass({
+var Dimension = React.createClass({displayName: "Dimension",
     getInitialState: function() {
 	return { folded: true, data: [] };
     },
@@ -96,45 +96,45 @@ var Dimension = React.createClass({
 	if (!this.state.folded) {
             codes = this.state.data.map(function(d) {
 		return (
-			<div key={d.id} >
-			<input type="checkbox"  checked={d.selected} onChange={this.__changeSelection.bind(this, d.id, this.props.parent)} />
-			{d.name}
-			<br/>
-			</div>
+			React.createElement("div", {key: d.id}, 
+			React.createElement("input", {type: "checkbox", checked: d.selected, onChange: this.__changeSelection.bind(this, d.id, this.props.parent)}), 
+			d.name, 
+			React.createElement("br", null)
+			)
 		);
             }.bind(this));
 	}
 	
 	return (
-	    <div key={this.props.id}>
-	    <li onClick={this.handleOnClick.bind(this,this.props.id)} >
-	    {this.props.name} 
-	    </li> 
-		{codes}
-	    </div>
+	    React.createElement("div", {key: this.props.id}, 
+	    React.createElement("li", {onClick: this.handleOnClick.bind(this,this.props.id)}, 
+	    this.props.name
+	    ), 
+		codes
+	    )
 	)
     }
 });
 
-var Dimensions = React.createClass({
+var Dimensions = React.createClass({displayName: "Dimensions",
     render: function () {
 	var self = this;
 	var codes = [];
 	if (this.props.data){
 	    codes = $.map(this.props.data, function (codes,codename) {
-		return <Dimension key={codename} name={codename} parent={codename}  codes={codes} handleFilter2={self.props.handleFilter2} />;
+		return React.createElement(Dimension, {key: codename, name: codename, parent: codename, codes: codes, handleFilter2: self.props.handleFilter2});
 	    });
 	}
 	return (
-		<div>
-		<h2>Dimensions</h2>
-		{codes}
-	</div>
+		React.createElement("div", null, 
+		React.createElement("h2", null, "Dimensions"), 
+		codes
+	)
     )
     }
 });
 
-var DatasetFacets = React.createClass({
+var DatasetFacets = React.createClass({displayName: "DatasetFacets",
     getInitialState: function() {
 	return { data: [] };
     },
@@ -166,7 +166,7 @@ var DatasetFacets = React.createClass({
 //                        <TreeNode key={this.state.data.id} 
 //                                data={this.state.data} 
 	    //                                onCategorySelect={this.onSelect} />
-		    <Dimensions data={this.state.data} handleFilter2={this.props.handleFilter2} />
+		    React.createElement(Dimensions, {data: this.state.data, handleFilter2: this.props.handleFilter2})
 //            </ul>
 //                </div>
 //            </div>
@@ -174,7 +174,7 @@ var DatasetFacets = React.createClass({
     }
 });
 
-var ButtonDatasetInfos = React.createClass({
+var ButtonDatasetInfos = React.createClass({displayName: "ButtonDatasetInfos",
     getInitialState: function() {
 	return { results: [] };
     },
@@ -195,11 +195,11 @@ var ButtonDatasetInfos = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonDatasetInfo}>I</button>;
+	return React.createElement("button", {onClick: this.handleButtonDatasetInfo}, "I");
     }
 });
 	    
-var ButtonDatasetDownload = React.createClass({
+var ButtonDatasetDownload = React.createClass({displayName: "ButtonDatasetDownload",
     getInitialState: function() {
 	return { results: [] };
     },
@@ -213,11 +213,11 @@ var ButtonDatasetDownload = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonDatasetDownload}>D</button>;
+	return React.createElement("button", {onClick: this.handleButtonDatasetDownload}, "D");
     }
 });
 	    
-var ButtonSeriesDownload = React.createClass({
+var ButtonSeriesDownload = React.createClass({displayName: "ButtonSeriesDownload",
     getInitialState: function() {
 	return { results: [] };
     },
@@ -230,11 +230,11 @@ var ButtonSeriesDownload = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonSeriesDownload}>D</button>;
+	return React.createElement("button", {onClick: this.handleButtonSeriesDownload}, "D");
     }
 });
 	    
-var ButtonSeriesPrint = React.createClass({
+var ButtonSeriesPrint = React.createClass({displayName: "ButtonSeriesPrint",
     getInitialState: function() {
 	return { results: [] };
     },
@@ -255,11 +255,11 @@ var ButtonSeriesPrint = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonSeriesPrint}>P</button>;
+	return React.createElement("button", {onClick: this.handleButtonSeriesPrint}, "P");
     }
 });
 	    
-var ButtonSeriesPlot = React.createClass({
+var ButtonSeriesPlot = React.createClass({displayName: "ButtonSeriesPlot",
     getInitialState: function() {
 	return { results: [] };
     },
@@ -281,103 +281,103 @@ var ButtonSeriesPlot = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonSeriesPlot}>G</button>;
+	return React.createElement("button", {onClick: this.handleButtonSeriesPlot}, "G");
     }
 });
 	    
-var DatasetsResult = React.createClass({
+var DatasetsResult = React.createClass({displayName: "DatasetsResult",
     render: function() {
 	var self = this;
 	
 	if (this.props.optionaldatasetcode) {
 	    return (
-		    <div>
-		    <tr><th>this.props.code</th></tr>
-		    <tr>
-		    <td>{this.props.provider}</td>
-		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}> {this.props.name}</button></td>
-		    <td><ButtonDatasetInfos code={this.props.code} /></td>
-		    <td><ButtonDatasetDownload code={this.props.code} /></td>
-		    </tr>
-		    </div>
+		    React.createElement("div", null, 
+		    React.createElement("tr", null, React.createElement("th", null, "this.props.code")), 
+		    React.createElement("tr", null, 
+		    React.createElement("td", null, this.props.provider), 
+		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}, " ", this.props.name)), 
+		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
+		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
+		    )
+		    )
 	    );
 	} else {
 	    return (
-		    <tr>
-		    <td>{this.props.provider}</td>
-		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}> {this.props.name}</button></td>
-		    <td><ButtonDatasetInfos code={this.props.code} /></td>
-		    <td><ButtonDatasetDownload code={this.props.code} /></td>
-		    </tr>
+		    React.createElement("tr", null, 
+		    React.createElement("td", null, this.props.provider), 
+		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}, " ", this.props.name)), 
+		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
+		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
+		    )
 	    );
 	}
     }});
 
 
-var SeriesResult = React.createClass({
+var SeriesResult = React.createClass({displayName: "SeriesResult",
     render: function() {
 	var provider = '';
 	if (this.props.with_provider){
-	    provider = <td>{this.props.provider}</td>;
+	    provider = React.createElement("td", null, this.props.provider);
 	}
 	return (
-		<tr>
-		{provider}
-		<td>{this.props.name}</td>
-		<td><ButtonSeriesPrint code={this.props.code} /></td>
-		<td><ButtonSeriesDownload code={this.props.code} /></td>
-		<td><ButtonSeriesPlot code={this.props.code} /></td>
-		</tr>
+		React.createElement("tr", null, 
+		provider, 
+		React.createElement("td", null, this.props.name), 
+		React.createElement("td", null, React.createElement(ButtonSeriesPrint, {code: this.props.code})), 
+		React.createElement("td", null, React.createElement(ButtonSeriesDownload, {code: this.props.code})), 
+		React.createElement("td", null, React.createElement(ButtonSeriesPlot, {code: this.props.code}))
+		)
 	);
     }
 });
 
 
-var SearchDatasetsResults = React.createClass({
+var SearchDatasetsResults = React.createClass({displayName: "SearchDatasetsResults",
     render: function() {
 	var self = this
 	var results = JSON.parse(this.props.results);
 	
-	return  <div><table>
-	    <thead>
-	    <tr><th>Provider</th><th>Dataset</th></tr>
-	    </thead>
-	    <tbody>
-	    {results.map( function(r) {
-		return <DatasetsResult key={r.datasetCode} code={r.datasetCode} name={r.name} optionaldatasetcode={0} provider={r.provider} handleDatasetSeries={self.props.handleDatasetSeries} />;
+	return  React.createElement("div", null, React.createElement("table", null, 
+	    React.createElement("thead", null, 
+	    React.createElement("tr", null, React.createElement("th", null, "Provider"), React.createElement("th", null, "Dataset"))
+	    ), 
+	    React.createElement("tbody", null, 
+	    results.map( function(r) {
+		return React.createElement(DatasetsResult, {key: r.datasetCode, code: r.datasetCode, name: r.name, optionaldatasetcode: 0, provider: r.provider, handleDatasetSeries: self.props.handleDatasetSeries});
 	    }
-			)}
-	</tbody>
-	</table></div>;
+			)
+	)
+	));
     }});
 		    
-var SearchSeriesResults = React.createClass({
+var SearchSeriesResults = React.createClass({displayName: "SearchSeriesResults",
     render: function() {
 	var self = this;
 	var results = JSON.parse(this.props.results);
 	var header;
 	if (self.props.with_provider)
-	    header = <tr><th>Provider</th><th>Series name</th></tr>;
+	    header = React.createElement("tr", null, React.createElement("th", null, "Provider"), React.createElement("th", null, "Series name"));
 	else
-	    header = <tr><th>Series name</th></tr>;
+	    header = React.createElement("tr", null, React.createElement("th", null, "Series name"));
 	    
 	var table = results.map( function(r) {
-	    return <SeriesResult key={r.key} code={r.key} provider={r.provider} name={r.name}
-	    optionaldatasetcode={0} with_provider={self.props.with_provider} />;
+	    return React.createElement(SeriesResult, {key: r.key, code: r.key, provider: r.provider, name: r.name, 
+	    optionaldatasetcode: 0, with_provider: self.props.with_provider});
 	});						       
 
-	return( <table>
-		<thead>
-		{header}
-		</thead>
-		<tbody>
-		{table}
-		</tbody>
-		</table>)
+	return( React.createElement("table", null, 
+		React.createElement("thead", null, 
+		header
+		), 
+		React.createElement("tbody", null, 
+		table
+		)
+		))
     }});
 		    
      
-var SearchFormDatasets = React.createClass({
+var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 
     getInitialState: function() {
 	return { searchString: '', results: [] };
@@ -411,23 +411,23 @@ var SearchFormDatasets = React.createClass({
 	var results = "";
 	
 	if (this.state.results.length > 0){
-	    optionalSearchDatasetsResults = <SearchDatasetsResults results = {this.state.results} handleDatasetSeries={this.props.handleDatasetSeries}/>;
+	    optionalSearchDatasetsResults = React.createElement(SearchDatasetsResults, {results: this.state.results, handleDatasetSeries: this.props.handleDatasetSeries});
 	}
 
 		
-	return 	<div>
-	    <div>
-	    <form>
-	    <input type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
-	    <input type="submit" onClick={this.handleSubmit} value="Go" />
-	    </form>
-	    </div>
-	    {optionalSearchDatasetsResults}
-	    </div>;
+	return 	React.createElement("div", null, 
+	    React.createElement("div", null, 
+	    React.createElement("form", null, 
+	    React.createElement("input", {type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
+	    React.createElement("input", {type: "submit", onClick: this.handleSubmit, value: "Go"})
+	    )
+	    ), 
+	    optionalSearchDatasetsResults
+	    );
     }
 });
 
-var SearchFormSeries = React.createClass({
+var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
 
     getInitialState: function() {
 	return { searchString: '*', results: [], filter1: {} };
@@ -487,23 +487,23 @@ var SearchFormSeries = React.createClass({
 	
 
 	if (this.state.results.length > 0){
-	    optionalSearchResults = <SearchSeriesResults results = {this.state.results} with_provider={true} />;
+	    optionalSearchResults = React.createElement(SearchSeriesResults, {results: this.state.results, with_provider: true});
 	}
 	console.log(optionalSearchResults)
 	
-	return <div>
-	    <div>
-	    <form>
-	    <input type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
-	    <input type="submit" onClick={this.handleSubmitSeries} value="Go" />
-	    </form>
-	    </div>
-	    {optionalSearchResults}
-	    </div>;
+	return React.createElement("div", null, 
+	    React.createElement("div", null, 
+	    React.createElement("form", null, 
+	    React.createElement("input", {type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
+	    React.createElement("input", {type: "submit", onClick: this.handleSubmitSeries, value: "Go"})
+	    )
+	    ), 
+	    optionalSearchResults
+	    );
     }
 });
 
-var SearchFormDatasetSeries = React.createClass({
+var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDatasetSeries",
 
     getInitialState: function() {
 	return { searchString: '', results: [] };
@@ -537,23 +537,23 @@ var SearchFormDatasetSeries = React.createClass({
 	var results = "";
 	
 	if (this.state.results.length > 0){
-	    optionalResults = <SearchSeriesResults results = {this.state.results} with_provider={false} />;
+	    optionalResults = React.createElement(SearchSeriesResults, {results: this.state.results, with_provider: false});
 	}
 
 		
-	return <div>
-	    <div>
-	    <form>
-	    <input type="text" value={this.state.searchString} onChange={this.handleChangeDatasetSeries} placeholder="Search query ..." />
-	    <input type="submit" onClick={this.handleSubmitDatasetSeries} value="Go" />
-	    </form>
-	    </div>
-	    {optionalResults}
-	    </div>;
+	return React.createElement("div", null, 
+	    React.createElement("div", null, 
+	    React.createElement("form", null, 
+	    React.createElement("input", {type: "text", value: this.state.searchString, onChange: this.handleChangeDatasetSeries, placeholder: "Search query ..."}), 
+	    React.createElement("input", {type: "submit", onClick: this.handleSubmitDatasetSeries, value: "Go"})
+	    )
+	    ), 
+	    optionalResults
+	    );
     }
 });
 
-var WidukindSearchDatasets = React.createClass({
+var WidukindSearchDatasets = React.createClass({displayName: "WidukindSearchDatasets",
 
     getInitialState: function() {
 	return { filter1: [] };
@@ -565,30 +565,30 @@ var WidukindSearchDatasets = React.createClass({
 	
     render: function() {
 	return (
-		<div>
-	        <div id="banner">
-  		  <h1>Widukind search</h1>
-		  <p className="lead">A database of international macroeconomic data</p>
-		</div>
+		React.createElement("div", null, 
+	        React.createElement("div", {id: "banner"}, 
+  		  React.createElement("h1", null, "Widukind search"), 
+		  React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+		), 
 
-		<div id="main-inner-2">
-		<div id="main-inner-1">
+		React.createElement("div", {id: "main-inner-2"}, 
+		React.createElement("div", {id: "main-inner-1"}, 
 		
-		<div id="facets1-2">
-		<LeftFacets handleFilter1={this.handleFilter1} />
-		</div>
-		<div id="results-2">
-		<SearchFormDatasets handleDatasetSeries={this.props.handleDatasetSeries} filter1={this.state.filter1} />
- 		</div>
-		</div>
+		React.createElement("div", {id: "facets1-2"}, 
+		React.createElement(LeftFacets, {handleFilter1: this.handleFilter1})
+		), 
+		React.createElement("div", {id: "results-2"}, 
+		React.createElement(SearchFormDatasets, {handleDatasetSeries: this.props.handleDatasetSeries, filter1: this.state.filter1})
+ 		)
+		)
 
-		</div>
-	    </div>
+		)
+	    )
 	);
     }
 });
 
-var WidukindSearchSeries = React.createClass({
+var WidukindSearchSeries = React.createClass({displayName: "WidukindSearchSeries",
 
     getInitialState: function() {
 	return { filter1: [] };
@@ -600,27 +600,27 @@ var WidukindSearchSeries = React.createClass({
 	
     render: function() {
 	return (
-		<div>
-	        <div id="banner">
-  		<h1>Widukind search</h1>
-		<p className="lead">A database of international macroeconomic data</p>
-		</div>
-		<div id="main-inner-2">
-		<div id="main-inner-1">
-		<div id="facets1-2">
-		<LeftFacets handleFilter1={this.handleFilter1} />
-		</div>
-		<div id="results-2">
-		<SearchFormSeries filter1={this.state.filter1} />
- 		</div>
-		</div>
-		</div>
-		</div>
+		React.createElement("div", null, 
+	        React.createElement("div", {id: "banner"}, 
+  		React.createElement("h1", null, "Widukind search"), 
+		React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+		), 
+		React.createElement("div", {id: "main-inner-2"}, 
+		React.createElement("div", {id: "main-inner-1"}, 
+		React.createElement("div", {id: "facets1-2"}, 
+		React.createElement(LeftFacets, {handleFilter1: this.handleFilter1})
+		), 
+		React.createElement("div", {id: "results-2"}, 
+		React.createElement(SearchFormSeries, {filter1: this.state.filter1})
+ 		)
+		)
+		)
+		)
 	);
     }
 });
 
-var WidukindSearchDatasetSeries = React.createClass({
+var WidukindSearchDatasetSeries = React.createClass({displayName: "WidukindSearchDatasetSeries",
     getInitialState: function() {
 	return { filter2: {} };
     },
@@ -637,30 +637,30 @@ var WidukindSearchDatasetSeries = React.createClass({
 	var filters = this.state.filter2;
 	filters.datasetCode = this.props.datasetCode;
 	return (
-		<div>
-	        <div id="banner">
-  		  <h1>Widukind search</h1>
-		  <p className="lead">A database of international macroeconomic data</p>
-		</div>
+		React.createElement("div", null, 
+	        React.createElement("div", {id: "banner"}, 
+  		  React.createElement("h1", null, "Widukind search"), 
+		  React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+		), 
 
-		<div id="main-inner-2">
-		<div id="main-inner-1">
+		React.createElement("div", {id: "main-inner-2"}, 
+		React.createElement("div", {id: "main-inner-1"}, 
 		
-		<div id="facets1-2">
-		<DatasetFacets provider={this.props.provider} code={this.props.datasetCode} handleFilter2={this.handleFilter2} />
-		</div>
-		<div id="results-2">
-		<SearchFormDatasetSeries filters={filters} />
- 		</div>
+		React.createElement("div", {id: "facets1-2"}, 
+		React.createElement(DatasetFacets, {provider: this.props.provider, code: this.props.datasetCode, handleFilter2: this.handleFilter2})
+		), 
+		React.createElement("div", {id: "results-2"}, 
+		React.createElement(SearchFormDatasetSeries, {filters: filters})
+ 		)
 
-		</div>
-		</div>
-	    </div>
+		)
+		)
+	    )
 	);
     }
 });
 
-var Menu = React.createClass({
+var Menu = React.createClass({displayName: "Menu",
 
     getInitialState: function(){
         return { focused: 0 };
@@ -686,9 +686,9 @@ var Menu = React.createClass({
         // and will return a new array with <li> elements.
 
         return (
-	    <div>
-		<div id="menu">
-                <ul>{ this.props.items.map(function(m, index){
+	    React.createElement("div", null, 
+		React.createElement("div", {id: "menu"}, 
+                React.createElement("ul", null,  this.props.items.map(function(m, index){
 		    
                     var style = '';
 		    
@@ -699,53 +699,53 @@ var Menu = React.createClass({
                     // Notice the use of the bind() method. It makes the
                     // index available to the clicked function:
         
-                    return <li className={style} key={m} onClick={self.clicked.bind(self, index)}>{m}</li>;
+                    return React.createElement("li", {className: style, key: m, onClick: self.clicked.bind(self, index)}, m);
         
                 })
-		    }
-	    </ul>
-		</div>
-		</div>
+		    
+	    )
+		)
+		)
         );
     }
 });
 
-var Home = React.createClass({
+var Home = React.createClass({displayName: "Home",
     render: function(){
 	return(
-		<div id="homepage">
-		<h1>Widukind Search</h1>
-		<p> You can search either by datasets or by series </p>
-		</div>
+		React.createElement("div", {id: "homepage"}, 
+		React.createElement("h1", null, "Widukind Search"), 
+		React.createElement("p", null, " You can search either by datasets or by series ")
+		)
 	);
     }
 });
 
-var Datasets = React.createClass({
+var Datasets = React.createClass({displayName: "Datasets",
     render: function(){
 	return(
-		<WidukindSearchDatasets handleDatasetSeries={this.props.handleDatasetSeries} />
+		React.createElement(WidukindSearchDatasets, {handleDatasetSeries: this.props.handleDatasetSeries})
 	);
     }
 });
 
-var DatasetSeries = React.createClass({
+var DatasetSeries = React.createClass({displayName: "DatasetSeries",
     render: function(){
 	return(
-		<WidukindSearchDatasetSeries provider={this.props.provider} datasetCode={this.props.datasetCode} />
+		React.createElement(WidukindSearchDatasetSeries, {provider: this.props.provider, datasetCode: this.props.datasetCode})
 	);
     }
 });
 
-var Series = React.createClass({
+var Series = React.createClass({displayName: "Series",
     render: function(){
 	return(
-		<WidukindSearchSeries  />
+		React.createElement(WidukindSearchSeries, null)
 	);
     }
 });
 
-var App = React.createClass({
+var App = React.createClass({displayName: "App",
     
     
     getInitialState: function(){
@@ -766,31 +766,31 @@ var App = React.createClass({
 
 	switch (self.state.currentChoice) {
 	case 'Home':
-	    optionalChoice = <Home />;
+	    optionalChoice = React.createElement(Home, null);
 	    break;
 	case 'Datasets':
-	    optionalChoice = <Datasets handleDatasetSeries={self.handleDatasetSeries} />;
+	    optionalChoice = React.createElement(Datasets, {handleDatasetSeries: self.handleDatasetSeries});
 	    break;
 	case 'DatasetSeries':
-	    optionalChoice = <DatasetSeries datasetCode={self.state.datasetCode} />;
+	    optionalChoice = React.createElement(DatasetSeries, {datasetCode: self.state.datasetCode});
 	    break;
 	case 'Series':
-	    optionalChoice = <Series />;
+	    optionalChoice = React.createElement(Series, null);
 	    break;
 	default:
 	    console.error("Oops, shouldn't arrive here");
 	}
 
 	    return(
-		    <div>
-		    <Menu items =  {['Home', 'Series', 'Datasets']} menuChoice = {this.handleChoice} />
-		    {optionalChoice}
-		</div>
+		    React.createElement("div", null, 
+		    React.createElement(Menu, {items: ['Home', 'Series', 'Datasets'], menuChoice: this.handleChoice}), 
+		    optionalChoice
+		)
 	);
     }
 });
 
 React.render(
-	<App />,
+	React.createElement(App, null),
     document.body
 );
