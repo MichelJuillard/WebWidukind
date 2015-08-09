@@ -188,7 +188,7 @@ var ButtonDatasetInfos = React.createClass({displayName: "ButtonDatasetInfos",
     handleButtonDatasetInfo: function(e) {
 	    	e.preventDefault();
 	    $.get('/dataset_info',
-	      {'code': this.props.code},
+		  {'code': this.props.code.toLowerCase()},
 	      function(data){
 		  this.setState({results: data});
 	      }.bind(this));
@@ -208,7 +208,7 @@ var ButtonDatasetDownload = React.createClass({displayName: "ButtonDatasetDownlo
 	e.preventDefault();
 //	window.open('/download_dataset?datasetCode='+this.props.code+'&dimensions.code2[]=Gross domestic product&dimensions.code2[]=Gross national income');
 	if (this.props.code.length) {
-	    window.open('/download_dataset?datasetCode='+this.props.code);
+	    window.open('/download_dataset?datasetCode='+this.props.code.toLowerCase());
 	}
     },
 
@@ -295,7 +295,7 @@ var DatasetsResult = React.createClass({displayName: "DatasetsResult",
 		    React.createElement("tr", null, React.createElement("th", null, "this.props.code")), 
 		    React.createElement("tr", null, 
 		    React.createElement("td", null, this.props.provider), 
-		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}, " ", this.props.name)), 
+		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}, " ", this.props.name)), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
 		    )
@@ -305,7 +305,7 @@ var DatasetsResult = React.createClass({displayName: "DatasetsResult",
 	    return (
 		    React.createElement("tr", null, 
 		    React.createElement("td", null, this.props.provider), 
-		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}, " ", this.props.name)), 
+		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}, " ", this.props.name)), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
 		    )

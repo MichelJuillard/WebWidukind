@@ -188,7 +188,7 @@ var ButtonDatasetInfos = React.createClass({
     handleButtonDatasetInfo: function(e) {
 	    	e.preventDefault();
 	    $.get('/dataset_info',
-	      {'code': this.props.code},
+		  {'code': this.props.code.toLowerCase()},
 	      function(data){
 		  this.setState({results: data});
 	      }.bind(this));
@@ -208,7 +208,7 @@ var ButtonDatasetDownload = React.createClass({
 	e.preventDefault();
 //	window.open('/download_dataset?datasetCode='+this.props.code+'&dimensions.code2[]=Gross domestic product&dimensions.code2[]=Gross national income');
 	if (this.props.code.length) {
-	    window.open('/download_dataset?datasetCode='+this.props.code);
+	    window.open('/download_dataset?datasetCode='+this.props.code.toLowerCase());
 	}
     },
 
@@ -295,7 +295,7 @@ var DatasetsResult = React.createClass({
 		    <tr><th>this.props.code</th></tr>
 		    <tr>
 		    <td>{this.props.provider}</td>
-		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}> {this.props.name}</button></td>
+		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}> {this.props.name}</button></td>
 		    <td><ButtonDatasetInfos code={this.props.code} /></td>
 		    <td><ButtonDatasetDownload code={this.props.code} /></td>
 		    </tr>
@@ -305,7 +305,7 @@ var DatasetsResult = React.createClass({
 	    return (
 		    <tr>
 		    <td>{this.props.provider}</td>
-		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider,self.props.code)}> {this.props.name}</button></td>
+		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}> {this.props.name}</button></td>
 		    <td><ButtonDatasetInfos code={this.props.code} /></td>
 		    <td><ButtonDatasetDownload code={this.props.code} /></td>
 		    </tr>
