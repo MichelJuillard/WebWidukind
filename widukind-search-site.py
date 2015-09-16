@@ -258,7 +258,7 @@ def print_series():
     key = request.args.get('key')
     series = mongodb_series_by_key(key)
     print(key,series)
-    sd = pandas.Period(series['startDate'],freq=series['frequency'])
+    sd = pandas.Period(ordinal=series['startDate'],freq=series['frequency'])
     html =  "<div><table>" 
     html += "<tr><th>Name:</th><td>"+series['name']+"</td></tr>" 
     html += "<tr><th>Key:</th><td>"+key+"</td></tr>" 
@@ -275,7 +275,7 @@ def print_series():
 def plot_series():
     key = request.args.get('key')
     series = mongodb_series_by_key(key)
-    sd = pandas.Period(series['startDate'],freq=series['frequency'])
+    sd = pandas.Period(ordinal=series['startDate'],freq=series['frequency'])
     html = """<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -302,7 +302,7 @@ def plot_series():
 def download_series():
     key = request.args.get('key')
     series = mongodb_series_by_key(key)
-    sd = pandas.Period(series['startDate'],freq=series['frequency'])
+    sd = pandas.Period(ordinal=series['startDate'],freq=series['frequency'])
     values = []
     for val in series['values']:
         values.append([str(sd), val])
@@ -394,10 +394,10 @@ def EVIEWS_query_series(provider,dataset_code):
             freq = r['frequency']
             dmin = r['startDate']
             dmax = r['endDate']
-            pStartDate = pandas.Period(r['startDate'],freq=freq)
-            pEndDate = pandas.Period(r['endDate'],freq=freq)
-            pDmin = pandas.Period(dmin,freq=freq);
-            pDmax = pandas.Period(dmax,freq=freq);
+            pStartDate = pandas.Period(ordinal=r['startDate'],freq=freq)
+            pEndDate = pandas.Period(ordinal=r['endDate'],freq=freq)
+            pDmin = pandas.Period(ordinal=dmin,freq=freq);
+            pDmax = pandas.Period(ordinal=dmax,freq=freq);
             table['dates'] = pandas.period_range(pStartDate,pEndDate,freq=freq).to_native_types()
             init = False
         print(r['key'])
