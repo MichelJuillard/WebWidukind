@@ -9,6 +9,10 @@ import csv
 from bson.json_util import dumps
 from collections import OrderedDict
 import datetime
+from bson import json_util
+
+client = pymongo.MongoClient(**configuration['MongoDB'])
+db = client['widukind']
 
 app = Flask(__name__)
 app.debug = True
@@ -428,7 +432,59 @@ def EVIEWS_query_series(provider,dataset_code):
     string += "</table>\n"
     
     return(string)
-    
+
+@app.route('/providers', methods=["GET"])
+def get_providers():
+    return json_util.dumps(db.providers.find(), default=json_util.default)
+
+@app.route('/<provider>', methods=["GET"])
+def get_provider(provider):
+    return json_util.dumps(db.providers.find_one({'name': provider}), default=json_util.default)
+
+@app.route('/<provider>/categories', methods=["GET"])
+def get_categories(provider):
+    return json_util.dumps(db.categories.find({'provider': provider}), default=json_util.default)
+
+@app.route('/<provider>/categories/<id_category>', methods=["GET"])
+def get_category(provider,id_category):
+    return json_util.dumps(db.categories.find(
+        {'provider': provider, '_id':bson.ObjectId(id_category)}), default=json_util.default)
+
+@app.route('/<provider>/datasets', methods=["GET"])
+def get_datasets(provider):
+    return json_util.dumps(db.datasets.find({'provider': provider}), default=json_util.default)
+
+@app.route('/<provider>/dataset/<dataset_code>', methods=["GET"])
+def get_dataset(provider,dataset_code):
+    return json_util.dumps(db.datasets.find(
+        {'provider': provider, 'datasetCode': dataset_code}), default=json_util.default)
+
+@app.route('/<provider>/dataset/<dataset_code>/series', methods=["GET"])
+def get_series(provider,dataset_code):
+    return json_util.dumps(db.series.find(
+        {'provider': provider, 'datasetCode':dataset_code}), default=json_util.default)
+
+@app.route('/<provider>/dataset/<dataset_code>/series/<key>',
+                   methods=["GET"])
+@app.route('/<provider>/series/<key>',
+                   methods=["GET"])
+def get_a_series(provider,key,dataset_code=None):
+    if dataset_code:
+        return json_util.dumps(db.series.find(
+            {'provider': provider, 'datasetCode':dataset_code,'key':key} ), default=json_util.default)
+    else:
+        return json_util.dumps(db.series.find(
+            {'provider': provider, 'key':key} ), default=json_util.default)
+
+@app.route('/<provider>/dataset/<dataset_code>/values',
+                   methods=["GET"])
+def get_values(provider,dataset_code):
+    query = {}
+    query['datasetCode'] = dataset_code;
+    for r in request.args.lists():
+        query['dimensions.'+r[0]] = {'$regex': r[1][0]};
+    return json_util.dumps(db.series.find(query,{'releaseDates':0,'revisions':0,'attributes':0}), default=json_util.default)
+
     
         
 if __name__ == '__main__':
