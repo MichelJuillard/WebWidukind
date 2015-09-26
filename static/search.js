@@ -296,6 +296,7 @@ var DatasetsResult = React.createClass({displayName: "DatasetsResult",
 		    React.createElement("tr", null, 
 		    React.createElement("td", null, this.props.provider), 
 		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}, " ", this.props.name)), 
+		    React.createElement("td", null, this.props.frequencies), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
 		    )
@@ -306,6 +307,7 @@ var DatasetsResult = React.createClass({displayName: "DatasetsResult",
 		    React.createElement("tr", null, 
 		    React.createElement("td", null, this.props.provider), 
 		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}, " ", this.props.name)), 
+		    React.createElement("td", null, this.props.frequencies), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
 		    )
@@ -324,6 +326,7 @@ var SeriesResult = React.createClass({displayName: "SeriesResult",
 		React.createElement("tr", null, 
 		provider, 
 		React.createElement("td", null, this.props.name), 
+		React.createElement("td", null, this.props.frequency), 
 		React.createElement("td", null, React.createElement(ButtonSeriesPrint, {code: this.props.code})), 
 		React.createElement("td", null, React.createElement(ButtonSeriesDownload, {code: this.props.code})), 
 		React.createElement("td", null, React.createElement(ButtonSeriesPlot, {code: this.props.code}))
@@ -340,11 +343,12 @@ var SearchDatasetsResults = React.createClass({displayName: "SearchDatasetsResul
 	
 	return  React.createElement("div", null, React.createElement("table", null, 
 	    React.createElement("thead", null, 
-	    React.createElement("tr", null, React.createElement("th", null, "Provider"), React.createElement("th", null, "Dataset"))
+	    React.createElement("tr", null, React.createElement("th", null, "Provider"), React.createElement("th", null, "Dataset"), React.createElement("th", null, "Freq."))
 	    ), 
 	    React.createElement("tbody", null, 
 	    results.map( function(r) {
-		return React.createElement(DatasetsResult, {key: r.datasetCode, code: r.datasetCode, name: r.name, optionaldatasetcode: 0, provider: r.provider, handleDatasetSeries: self.props.handleDatasetSeries});
+		return React.createElement(DatasetsResult, {key: r.datasetCode, code: r.datasetCode, name: r.name, provider: r.provider, 
+		frequencies: r.frequencies, optionaldatasetcode: 0, handleDatasetSeries: self.props.handleDatasetSeries});
 	    }
 			)
 	)
@@ -357,13 +361,13 @@ var SearchSeriesResults = React.createClass({displayName: "SearchSeriesResults",
 	var results = JSON.parse(this.props.results);
 	var header;
 	if (self.props.with_provider)
-	    header = React.createElement("tr", null, React.createElement("th", null, "Provider"), React.createElement("th", null, "Series name"));
+	    header = React.createElement("tr", null, React.createElement("th", null, "Provider"), React.createElement("th", null, "Series name"), React.createElement("th", null, "Freq."));
 	else
 	    header = React.createElement("tr", null, React.createElement("th", null, "Series name"));
 	    
 	var table = results.map( function(r) {
 	    return React.createElement(SeriesResult, {key: r.key, code: r.key, provider: r.provider, name: r.name, 
-	    optionaldatasetcode: 0, with_provider: self.props.with_provider});
+	    frequency: r.frequency, optionaldatasetcode: 0, with_provider: self.props.with_provider});
 	});						       
 
 	return( React.createElement("table", null, 
@@ -406,6 +410,25 @@ var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 	});
     },
     
+    componentWillReceiveProps: function(nextProps) {
+	this.setState({filter1: nextProps.filter1});
+    },
+
+    componentDidMount: function() {
+	console.log(this.state)
+	var data = "";
+	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
+	$.ajax({
+	    url: '/REST_datasets',
+	    data: data, 
+	    type: 'POST',
+	    contentType: 'application/json',
+	    success: function(d){
+		this.setState({results: d})
+	    }.bind(this)
+	});
+    },
+	
     render: function() {
 	var optionalSearchDatasetsResults;
 	var results = "";
@@ -430,7 +453,7 @@ var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
 
     getInitialState: function() {
-	return { searchString: '*', results: [], filter1: {} };
+	return { searchString: '', results: [], filter1: {} };
     },
 
     
@@ -464,11 +487,7 @@ var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
     componentDidMount: function() {
 	console.log(this.state)
 	var data = "";
-	if (this.state.searchString){
-	    data = JSON.stringify({'query': this.state.searchString, 'filter': this.state.filter1});
-	} else {
-	    data = JSON.stringify({'query': null, 'filter': this.state.filter1});
-	}
+	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
 	$.ajax({
 	    url: '/REST_series',
 	    data: data, 
@@ -532,6 +551,25 @@ var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDataset
 	});
     },
     
+    componentWillReceiveProps: function(nextProps) {
+	this.setState({filter1: nextProps.filter1});
+    },
+
+    componentDidMount: function() {
+	console.log(this.state)
+	var data = "";
+	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
+	$.ajax({
+	    url: '/REST_series',
+	    data: data, 
+	    type: 'POST',
+	    contentType: 'application/json',
+	    success: function(d){
+		this.setState({results: d})
+	    }.bind(this)
+	});
+    },
+	
     render: function() {
 	var optionalResults;
 	var results = "";

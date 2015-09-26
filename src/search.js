@@ -296,6 +296,7 @@ var DatasetsResult = React.createClass({
 		    <tr>
 		    <td>{this.props.provider}</td>
 		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}> {this.props.name}</button></td>
+		    <td>{this.props.frequencies}</td>
 		    <td><ButtonDatasetInfos code={this.props.code} /></td>
 		    <td><ButtonDatasetDownload code={this.props.code} /></td>
 		    </tr>
@@ -306,6 +307,7 @@ var DatasetsResult = React.createClass({
 		    <tr>
 		    <td>{this.props.provider}</td>
 		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}> {this.props.name}</button></td>
+		    <td>{this.props.frequencies}</td>
 		    <td><ButtonDatasetInfos code={this.props.code} /></td>
 		    <td><ButtonDatasetDownload code={this.props.code} /></td>
 		    </tr>
@@ -324,6 +326,7 @@ var SeriesResult = React.createClass({
 		<tr>
 		{provider}
 		<td>{this.props.name}</td>
+		<td>{this.props.frequency}</td>
 		<td><ButtonSeriesPrint code={this.props.code} /></td>
 		<td><ButtonSeriesDownload code={this.props.code} /></td>
 		<td><ButtonSeriesPlot code={this.props.code} /></td>
@@ -340,11 +343,12 @@ var SearchDatasetsResults = React.createClass({
 	
 	return  <div><table>
 	    <thead>
-	    <tr><th>Provider</th><th>Dataset</th></tr>
+	    <tr><th>Provider</th><th>Dataset</th><th>Freq.</th></tr>
 	    </thead>
 	    <tbody>
 	    {results.map( function(r) {
-		return <DatasetsResult key={r.datasetCode} code={r.datasetCode} name={r.name} optionaldatasetcode={0} provider={r.provider} handleDatasetSeries={self.props.handleDatasetSeries} />;
+		return <DatasetsResult key={r.datasetCode} code={r.datasetCode} name={r.name} provider={r.provider}
+		frequencies={r.frequencies} optionaldatasetcode={0} handleDatasetSeries={self.props.handleDatasetSeries} />;
 	    }
 			)}
 	</tbody>
@@ -357,13 +361,13 @@ var SearchSeriesResults = React.createClass({
 	var results = JSON.parse(this.props.results);
 	var header;
 	if (self.props.with_provider)
-	    header = <tr><th>Provider</th><th>Series name</th></tr>;
+	    header = <tr><th>Provider</th><th>Series name</th><th>Freq.</th></tr>;
 	else
 	    header = <tr><th>Series name</th></tr>;
 	    
 	var table = results.map( function(r) {
 	    return <SeriesResult key={r.key} code={r.key} provider={r.provider} name={r.name}
-	    optionaldatasetcode={0} with_provider={self.props.with_provider} />;
+	    frequency={r.frequency} optionaldatasetcode={0} with_provider={self.props.with_provider} />;
 	});						       
 
 	return( <table>
@@ -406,6 +410,25 @@ var SearchFormDatasets = React.createClass({
 	});
     },
     
+    componentWillReceiveProps: function(nextProps) {
+	this.setState({filter1: nextProps.filter1});
+    },
+
+    componentDidMount: function() {
+	console.log(this.state)
+	var data = "";
+	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
+	$.ajax({
+	    url: '/REST_datasets',
+	    data: data, 
+	    type: 'POST',
+	    contentType: 'application/json',
+	    success: function(d){
+		this.setState({results: d})
+	    }.bind(this)
+	});
+    },
+	
     render: function() {
 	var optionalSearchDatasetsResults;
 	var results = "";
@@ -430,7 +453,7 @@ var SearchFormDatasets = React.createClass({
 var SearchFormSeries = React.createClass({
 
     getInitialState: function() {
-	return { searchString: '*', results: [], filter1: {} };
+	return { searchString: '', results: [], filter1: {} };
     },
 
     
@@ -464,11 +487,7 @@ var SearchFormSeries = React.createClass({
     componentDidMount: function() {
 	console.log(this.state)
 	var data = "";
-	if (this.state.searchString){
-	    data = JSON.stringify({'query': this.state.searchString, 'filter': this.state.filter1});
-	} else {
-	    data = JSON.stringify({'query': null, 'filter': this.state.filter1});
-	}
+	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
 	$.ajax({
 	    url: '/REST_series',
 	    data: data, 
@@ -532,6 +551,25 @@ var SearchFormDatasetSeries = React.createClass({
 	});
     },
     
+    componentWillReceiveProps: function(nextProps) {
+	this.setState({filter1: nextProps.filter1});
+    },
+
+    componentDidMount: function() {
+	console.log(this.state)
+	var data = "";
+	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
+	$.ajax({
+	    url: '/REST_series',
+	    data: data, 
+	    type: 'POST',
+	    contentType: 'application/json',
+	    success: function(d){
+		this.setState({results: d})
+	    }.bind(this)
+	});
+    },
+	
     render: function() {
 	var optionalResults;
 	var results = "";

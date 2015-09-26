@@ -118,7 +118,13 @@ def elasticsearch_query_datasets(query={},filter={}):
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
-        results.append({"datasetCode": s["datasetCode"], "name": s["name"], "provider": s["provider"]})
+        # code to be simplified once Insee is fixed
+        r = {"datasetCode": s["datasetCode"], "name": s["name"], "provider": s["provider"]}
+        if "frequencies" in s:
+            r.update({"frequencies": s["frequencies"]})
+        else:
+            r.update({"frequencies": ''})
+        results.append(r)
     return results
 
 def elasticsearch_get_dataset(datasetCode):
@@ -150,7 +156,7 @@ def elasticsearch_query_series(query,filter={}):
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
-        results.append({"key": s["key"], "name": s["name"], "provider": s["provider"]})
+        results.append({"key": s["key"], "name": s["name"], "provider": s["provider"], "frequency": s["frequency"]})
     return results
 
 def form_es_query(query,filter):
