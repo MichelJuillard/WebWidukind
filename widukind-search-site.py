@@ -343,19 +343,17 @@ def download_dataset():
     ck = list(dataset['dimensions'].keys())
     cl = sorted(ck, key = lambda t: t.lower())
     headers = ['key']+cl
-    dmin = datetime.datetime(3000,1,1)
-    dmax = datetime.datetime(1,1,1)
+    dmin = float('inf')
+    dmax = -float('inf')
     for s in series:
         if s['startDate'] < dmin:
             dmin = s['startDate']
         if s['endDate'] > dmax:
             dmax = s['endDate']
         freq = s['frequency']
-    pStartDate = pandas.Period(s['startDate'],freq=freq)
-    pEndDate = pandas.Period(s['endDate'],freq=freq)
-    pDmin = pandas.Period(dmin,freq=freq);
-    pDmax = pandas.Period(dmax,freq=freq);
-    headers += pandas.period_range(pStartDate,pEndDate,freq=freq).to_native_types()
+    pDmin = pandas.Period(ordinal=dmin,freq=freq);
+    pDmax = pandas.Period(ordinal=dmax,freq=freq);
+    headers += list(pandas.period_range(pDmin,pDmax,freq=freq).to_native_types())
     elements = [headers]
     series.rewind()
     for s in series:
@@ -365,10 +363,14 @@ def download_dataset():
                 row.append(s['dimensions'][c])
             else:
                 row.append('')
-        for d in pandas.period_range(pDmin,pStartDate-1,freq=freq):
+        p_start_date = pandas.Period(ordinal=s['startDate'],freq=freq)
+        p_end_date = pandas.Period(ordinal=s['endDate'],freq=freq)
+        for d in pandas.period_range(pDmin,p_start_date-1,freq=freq):
             row.append(None)
         for val in s['values']:
             row.append(val)
+        for d in pandas.period_range(p_end_date+1,pDmax,freq=freq):
+            row.append(None)
         elements.append(row)
     csv_output = io.StringIO()
     writer = csv.writer(csv_output, quoting=csv.QUOTE_NONNUMERIC)
@@ -377,8 +379,6 @@ def download_dataset():
     response = make_response(csv_output.getvalue())
     response.headers["Content-disposition"] = "attachment; filename="+filter['datasetCode']+".csv"
 
-    print(csv_output.getvalue())
-    
     return response
 
 @app.route('/EVIEWS/<provider>/dataset/<dataset_code>/values', methods = ['GET', 'POST'])
