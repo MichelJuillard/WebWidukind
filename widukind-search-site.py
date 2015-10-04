@@ -31,7 +31,42 @@ def dataset_facets():
     es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
     s  = res['hits']['hits'][0]["_source"]
-    return dumps(s['codeList'])
+    facets = []
+    id = 1
+    if len(s['frequencies']) > 1:
+        freqs = []
+        for f in s['frequencies']:
+            if (f == 'A'):
+                freqs.append({'id': id, 'field': 'frequency', 'code': 'a', 'name': 'Year'})
+            elif (f == 'S'):
+                freqs.append({'id': id, 'field': 'frequency', 'code': 's', 'name': 'Semester'})
+            elif (f == 'Q'):
+                freqs.append({'id': id, 'field': 'frequency', 'code': 'q', 'name': 'Quarter'})
+            elif (f == 'M'):
+                freqs.append({'id': id, 'field': 'frequency', 'code': 'm', 'name': 'Month'})
+            elif (f == 'W'):
+                freqs.append({'id': id, 'field': 'frequency', 'code': 'w', 'name': 'Week'})
+            elif (f == 'D'):
+                freqs.append({'id': id, 'field': 'frequency', 'code': 'd', 'name': 'Day'})
+            id += 1
+        facets.append({'id': id, 'code': 'frequencies', 'name': 'Frequency', 'children': freqs})
+        id += 1
+    ndim = 0
+    dim1 = []
+    for c in s['codeList']:
+        code_list = s['codeList'][c]
+        if len(code_list) > 1:
+            dim2 = []
+            for d in code_list:
+                dim2.append({'id': id, 'field': 'dimensions.'+c, 'code': d[0].lower(), 'name': d[1]})
+                id += 1
+            dim1.append({'id': id, 'code': c, 'name': c, 'children': dim2})
+            id += 1
+            ndim += 1
+    if ndim > 0:
+        facets.append({'id': id, 'code': 'dimensions', 'name': 'Dimensions', 'children': dim1})
+        id += 1
+    return dumps(facets)
 
 @app.route('/provider_facets', methods = ['GET', 'POST'])
 def provider_facets():

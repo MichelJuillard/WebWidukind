@@ -1,4 +1,54 @@
-var LeftFacets = React.createClass({displayName: "LeftFacets",
+var FrequencyFacets = React.createClass({displayName: "FrequencyFacets",
+    getInitialState: function() {
+	return { data: [{id: "Year", code: "a", selected: false},
+			{id: "Semester", code: "h", selected: false},
+		        {id: "Quarter", code: "q", selected: false},
+		        {id: "Month", code: "m", selected: false},
+		        {id: "Week", code: "w", selected: false},
+		        {id: "Day", code: "d", selected: false}] };
+    },
+
+    __changeSelection: function(id) {
+        var state = this.state.data.map(function(d) {
+            return {
+                id: d.id,
+		code: d.code,
+                selected: (d.id === id ? !d.selected : d.selected)
+            };
+        });
+	
+        this.setState({ data: state });
+	
+	var selection = [];
+	for (var i=0; i < state.length; i++){
+	    if (state[i].selected) selection.push(String(state[i].code))
+	}
+        this.props.handleFilter2("frequency","",selection);
+    },
+
+    render: function() {
+        var checks = this.state.data.map(function(d) {
+            return (
+		React.createElement("div", {key: d.id}, 
+                    React.createElement("input", {type: "checkbox", checked: d.selected, onChange: this.__changeSelection.bind(this, d.id)}), 
+		    d.id, 
+		React.createElement("br", null)
+		    )
+            );
+        }.bind(this));
+
+        return (
+		React.createElement("div", null, 
+		React.createElement("h2", null, "Frequency"), 
+		React.createElement("form", null, 
+                checks
+            )
+		)
+        );
+    },
+});
+
+var ProvidersFacets = React.createClass({displayName: "ProvidersFacets",
     getInitialState: function() {
 	return { data: [] };
     },
@@ -88,7 +138,7 @@ var Dimension = React.createClass({displayName: "Dimension",
 	for (var i=0; i < state.length; i++){
 	    if (state[i].selected) selection.push(String(state[i].id).toLowerCase())
 	}
-        this.props.handleFilter2(this.props.parent,selection);
+        this.props.handleFilter2("dimensions",this.props.parent,selection);
     },
     
     render: function() {
@@ -116,24 +166,57 @@ var Dimension = React.createClass({displayName: "Dimension",
     }
 });
 
-var Dimensions = React.createClass({displayName: "Dimensions",
+var TreeNode = React.createClass({displayName: "TreeNode",
+    getInitialState: function() {
+	return { data: [] };
+    },
+    onCategorySelect: function (ev) {
+        if (this.props.onCategorySelect && !this.props.data.children) {
+            this.props.onCategorySelect(this);
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+    },
+    onChildDisplayToggle: function (ev) {
+        if (this.props.data.children) {
+            if (this.state.children && this.state.children.length) {
+                this.setState({children: null});
+            } else {
+                this.setState({children: this.props.data.children});
+            }
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+    },
     render: function () {
-	var self = this;
-	var codes = [];
-	if (this.props.data){
-	    codes = $.map(this.props.data, function (codes,codename) {
-		return React.createElement(Dimension, {key: codename, name: codename, parent: codename, codes: codes, handleFilter2: self.props.handleFilter2});
-	    });
+        if (!this.state.children){
+	    this.state.children = [];
 	}
-	return (
-		React.createElement("div", null, 
-		React.createElement("h2", null, "Dimensions"), 
-		codes
-	)
-    )
+        var classes = React.addons.classSet({
+            'has-children': (this.props.data.children ? true : false),
+            'open': (this.state.children.length ? true : false),
+            'closed': (this.state.children ? false : true),
+            'selected': (this.state.selected ? true : false)
+        });
+        return (
+            React.createElement("li", {ref: "node", className: classes, 
+                    onClick: this.onChildDisplayToggle}, 
+                React.createElement("a", {onClick: this.onCategorySelect, 
+                        "data-id": this.props.data.id}, 
+                    this.props.data.name
+                ), 
+                React.createElement("ul", null, 
+                    this.state.children.map(function(child) {
+                        return React.createElement(TreeNode, {key: child.id, 
+                                data: child, 
+                                onCategorySelect: this.props.onCategorySelect});
+                    }.bind(this))
+                )
+            )
+        );
     }
-});
-
+});    
+    
 var DatasetFacets = React.createClass({displayName: "DatasetFacets",
     getInitialState: function() {
 	return { data: [] };
@@ -159,17 +242,19 @@ var DatasetFacets = React.createClass({displayName: "DatasetFacets",
         }
     },
     render: function() {
-            return (
-//            <div className="panel panel-default">
-//                <div className="panel-body">
-//                    <ul className="category-tree">
-//                        <TreeNode key={this.state.data.id} 
-//                                data={this.state.data} 
-	    //                                onCategorySelect={this.onSelect} />
-		    React.createElement(Dimensions, {data: this.state.data, handleFilter2: this.props.handleFilter2})
-//            </ul>
-//                </div>
-//            </div>
+        return (
+		React.createElement("div", {className: "panel panel-default"}, 
+                React.createElement("div", {className: "panel-body"}, 
+                React.createElement("ul", {className: "category-tree"}, 
+		this.state.data.map(function(d) {
+		    return React.createElement(TreeNode, {key: this.state.data.id, 
+		                         parents: [d.code], 
+			                 data: d, 
+			                 onCategorySelect: this.onSelect}) 
+		}.bind(this))
+                )
+                )
+		)
         );
     }
 });
@@ -528,12 +613,7 @@ var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDataset
 	return { searchString: '', results: [] };
     },
 
-    handleChangeDatasetSeries: function(e) {
-	this.setState ({searchString: e.target.value});
-    },
-
-    handleSubmitDatasetSeries: function(e) {
-	e.preventDefault();
+    updateSearchResults: function() {
 	var data = "";
 	if (this.state.searchString.length){
 	    data = JSON.stringify({'query': this.state.searchString, 'filter': this.props.filters});
@@ -551,23 +631,22 @@ var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDataset
 	});
     },
     
+    handleChangeDatasetSeries: function(e) {
+	this.setState ({searchString: e.target.value});
+    },
+
+    handleSubmitDatasetSeries: function(e) {
+	e.preventDefault();
+	this.updateSearchResults();
+    },
+    
     componentWillReceiveProps: function(nextProps) {
-	this.setState({filter1: nextProps.filter1});
+	this.setState({filters: nextProps.filters});
+	this.updateSearchResults();
     },
 
     componentDidMount: function() {
-	console.log(this.state)
-	var data = "";
-	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
-	$.ajax({
-	    url: '/REST_series',
-	    data: data, 
-	    type: 'POST',
-	    contentType: 'application/json',
-	    success: function(d){
-		this.setState({results: d})
-	    }.bind(this)
-	});
+	this.updateSearchResults();
     },
 	
     render: function() {
@@ -613,7 +692,7 @@ var WidukindSearchDatasets = React.createClass({displayName: "WidukindSearchData
 		React.createElement("div", {id: "main-inner-1"}, 
 		
 		React.createElement("div", {id: "facets1-2"}, 
-		React.createElement(LeftFacets, {handleFilter1: this.handleFilter1})
+		React.createElement(ProvidersFacets, {handleFilter1: this.handleFilter1})
 		), 
 		React.createElement("div", {id: "results-2"}, 
 		React.createElement(SearchFormDatasets, {handleDatasetSeries: this.props.handleDatasetSeries, filter1: this.state.filter1})
@@ -646,7 +725,7 @@ var WidukindSearchSeries = React.createClass({displayName: "WidukindSearchSeries
 		React.createElement("div", {id: "main-inner-2"}, 
 		React.createElement("div", {id: "main-inner-1"}, 
 		React.createElement("div", {id: "facets1-2"}, 
-		React.createElement(LeftFacets, {handleFilter1: this.handleFilter1})
+		React.createElement(ProvidersFacets, {handleFilter1: this.handleFilter1})
 		), 
 		React.createElement("div", {id: "results-2"}, 
 		React.createElement(SearchFormSeries, {filter1: this.state.filter1})
@@ -663,11 +742,9 @@ var WidukindSearchDatasetSeries = React.createClass({displayName: "WidukindSearc
 	return { filter2: {} };
     },
 
-    handleFilter2: function(parent,filter) {
+    handleFilter2: function(node) {
 	filter_tmp = this.state.filter2;
-	d = {}
-	d[parent] = filter
-	filter_tmp['dimensions'] = d
+	filter_tmp[node._currentElement.props.data.field] = node._currentElement.props.data.code;
 	this.setState({filter2: filter_tmp});
     },
 	
@@ -685,7 +762,7 @@ var WidukindSearchDatasetSeries = React.createClass({displayName: "WidukindSearc
 		React.createElement("div", {id: "main-inner-1"}, 
 		
 		React.createElement("div", {id: "facets1-2"}, 
-		React.createElement(DatasetFacets, {provider: this.props.provider, code: this.props.datasetCode, handleFilter2: this.handleFilter2})
+		React.createElement(DatasetFacets, {provider: this.props.provider, code: this.props.datasetCode, onCategorySelect: this.handleFilter2})
 		), 
 		React.createElement("div", {id: "results-2"}, 
 		React.createElement(SearchFormDatasetSeries, {filters: filters})
