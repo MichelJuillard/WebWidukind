@@ -77,7 +77,8 @@ def provider_facets():
         results.append({'id': p['name'], 'selected': False, 'url': p['website']})
     return dumps(results)
 
-@app.route('/REST_datasets', methods = ['POST'])
+@app.route('/REST_datasets', methods = ['POST', 'OPTIONS'])
+@crossdomain(origin='*')
 def REST_datasets():
     if not request.json:
         abort(400)
