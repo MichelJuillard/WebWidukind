@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, make_response, abort, send_from_directory
+from flask.ext.cors import CORS
 from dlstats import configuration
 import pymongo
 from elasticsearch import Elasticsearch
@@ -18,6 +19,7 @@ app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'very very secret key key key'
 #app.secret_key = os.urandom(24)
+cors = CORS(app)
 
 @app.route('/facefiles/<file>')
 def facefiles(file):
@@ -78,7 +80,6 @@ def provider_facets():
     return dumps(results)
 
 @app.route('/REST_datasets', methods = ['POST', 'OPTIONS'])
-@crossdomain(origin='*')
 def REST_datasets():
     if not request.json:
         abort(400)
