@@ -1,3 +1,4 @@
+var widukind_root = 'http://widukind.cepremap.org';
 var FrequencyFacets = React.createClass({displayName: "FrequencyFacets",
     getInitialState: function() {
 	return { data: [{id: "Year", code: "a", selected: false},
@@ -54,7 +55,7 @@ var ProvidersFacets = React.createClass({displayName: "ProvidersFacets",
     },
 
     componentWillMount: function(props) {
-	    $.get('/provider_facets',
+	    $.get(widukind_root + '/provider_facets',
 	      {'code': this.props.code},
 		  function(data){
 		      if (this.isMounted()) {
@@ -223,7 +224,7 @@ var DatasetFacets = React.createClass({displayName: "DatasetFacets",
     },
 
     componentDidMount: function(props) {
-	    $.get('/dataset_facets',
+	    $.get(widukind_root + '/dataset_facets',
 		  {'provider': this.props.provider, 'code': this.props.code},
 		  function(data){
 		      if (this.isMounted()){
@@ -276,7 +277,7 @@ var ButtonDatasetInfos = React.createClass({displayName: "ButtonDatasetInfos",
     
     handleButtonDatasetInfo: function(e) {
 	    	e.preventDefault();
-	    $.get('/dataset_info',
+	    $.get(widukind_root + '/dataset_info',
 		  {'code': this.props.code.toLowerCase()},
 	      function(data){
 		  this.setState({results: data});
@@ -297,7 +298,7 @@ var ButtonDatasetDownload = React.createClass({displayName: "ButtonDatasetDownlo
 	e.preventDefault();
 //	window.open('/download_dataset?datasetCode='+this.props.code+'&dimensions.code2[]=Gross domestic product&dimensions.code2[]=Gross national income');
 	if (this.props.code.length) {
-	    window.open('/download_dataset?datasetCode='+this.props.code.toLowerCase());
+	    window.open(widukind_root + '/download_dataset?datasetCode='+this.props.code.toLowerCase());
 	}
     },
 
@@ -314,7 +315,7 @@ var ButtonSeriesDownload = React.createClass({displayName: "ButtonSeriesDownload
     handleButtonSeriesDownload: function(e) {
 	e.preventDefault();
 	if (this.props.code.length) {
-	    window.open('/download_series?key='+this.props.code);
+	    window.open(widukind_root + '/download_series?key='+this.props.code);
 	}
     },
 
@@ -336,7 +337,7 @@ var ButtonSeriesPrint = React.createClass({displayName: "ButtonSeriesPrint",
     
     handleButtonSeriesPrint: function(e) {
 	    	e.preventDefault();
-	    $.get('/print_series',
+	    $.get(widukind_root + '/print_series',
 	      {'key': this.props.code},
 		  function(html){
 		  this.setState({results: html});
@@ -362,7 +363,7 @@ var ButtonSeriesPlot = React.createClass({displayName: "ButtonSeriesPlot",
     
     handleButtonSeriesPlot: function(e) {
 	    	e.preventDefault();
-	    $.get('/plot_series',
+	    $.get(widukind_root + '/plot_series',
 	      {'key': this.props.code},
 		  function(html){
 		  this.setState({results: html});
@@ -489,7 +490,7 @@ var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 	    data = JSON.stringify({'query': null, 'filter': this.props.filter1});
 	}
 	$.ajax({
-	    url: '/REST_datasets',
+	    url: widukind_root + '/REST_datasets',
 	    data: data, 
 	    type: 'POST',
 	    contentType: 'application/json',
@@ -508,7 +509,7 @@ var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 	var data = "";
 	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
 	$.ajax({
-	    url: '/REST_datasets',
+	    url: widukind_root + '/REST_datasets',
 	    data: data, 
 	    type: 'POST',
 	    contentType: 'application/json',
@@ -559,7 +560,7 @@ var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
 	    data = JSON.stringify({'query': null, 'filter': this.props.filter1});
 	}
 	$.ajax({
-	    url: '/REST_series',
+	    url: widukind_root + '/REST_series',
 	    data: data, 
 	    type: 'POST',
 	    contentType: 'application/json',
@@ -578,7 +579,7 @@ var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
 	var data = "";
 	data = JSON.stringify({'query': '*', 'filter': this.state.filter1});
 	$.ajax({
-	    url: '/REST_series',
+	    url: widukind_root + '/REST_series',
 	    data: data, 
 	    type: 'POST',
 	    contentType: 'application/json',
@@ -625,7 +626,7 @@ var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDataset
 	    data = JSON.stringify({'query': null, 'filter': this.props.filters});
 	}
 	$.ajax({
-	    url: '/REST_series',
+	    url: widukind_root + '/REST_series',
 	    data: data, 
 	    type: 'POST',
 	    contentType: 'application/json',
