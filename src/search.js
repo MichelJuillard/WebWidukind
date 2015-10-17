@@ -199,7 +199,7 @@ var TreeNode = React.createClass({
             'selected': (this.state.selected ? true : false)
         });
         return (
-            <li ref="node" className={classes} 
+		<li ref="node" className={classes} key={this.props.key} 
                     onClick={this.onChildDisplayToggle}>
                 <a onClick={this.onCategorySelect} 
                         data-id={this.props.data.id}>
@@ -242,13 +242,12 @@ var DatasetFacets = React.createClass({
         }
     },
     render: function() {
-	if (this.state.data) {
             return (
 		    <div className="panel panel-default">
                     <div className="panel-body">
                     <ul className="category-tree">
 		    {this.state.data.map(function(d) {
-			return <TreeNode key={this.state.data.id}
+			return <TreeNode key={d.id}
 		        parents={[d.code]}
 			data={d} 
 			onCategorySelect={this.onSelect} /> 
@@ -257,9 +256,6 @@ var DatasetFacets = React.createClass({
                     </div>
 		    </div>
             );
-	} else {
-	    return []
-	}
     }
 });
 

@@ -35,7 +35,7 @@ def dataset_facets():
     s  = res['hits']['hits'][0]["_source"]
     facets = []
     id = 1
-    if len(s['frequencies']) > 1:
+    if 'frequencies' in s:
         freqs = []
         for f in s['frequencies']:
             if (f == 'A'):
@@ -194,7 +194,7 @@ def elasticsearch_query_series(query,filter={}):
     for hit in res['hits']['hits']:
         s = hit["_source"]
         bson = {"key": s["key"], "name": s["name"], "provider": s["provider"]}
-        if s['frequencies']:
+        if 'frequency' in s:
             bson.update({"frequency": s["frequency"]})
         results.append(bson)
     return results

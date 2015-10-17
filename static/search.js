@@ -199,7 +199,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             'selected': (this.state.selected ? true : false)
         });
         return (
-            React.createElement("li", {ref: "node", className: classes, 
+		React.createElement("li", {ref: "node", className: classes, key: this.props.key, 
                     onClick: this.onChildDisplayToggle}, 
                 React.createElement("a", {onClick: this.onCategorySelect, 
                         "data-id": this.props.data.id}, 
@@ -242,13 +242,12 @@ var DatasetFacets = React.createClass({displayName: "DatasetFacets",
         }
     },
     render: function() {
-	if (this.state.data) {
             return (
 		    React.createElement("div", {className: "panel panel-default"}, 
                     React.createElement("div", {className: "panel-body"}, 
                     React.createElement("ul", {className: "category-tree"}, 
 		    this.state.data.map(function(d) {
-			return React.createElement(TreeNode, {key: this.state.data.id, 
+			return React.createElement(TreeNode, {key: d.id, 
 		        parents: [d.code], 
 			data: d, 
 			onCategorySelect: this.onSelect}) 
@@ -257,9 +256,6 @@ var DatasetFacets = React.createClass({displayName: "DatasetFacets",
                     )
 		    )
             );
-	} else {
-	    return []
-	}
     }
 });
 
