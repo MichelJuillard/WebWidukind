@@ -242,20 +242,24 @@ var DatasetFacets = React.createClass({
         }
     },
     render: function() {
-        return (
-		<div className="panel panel-default">
-                <div className="panel-body">
-                <ul className="category-tree">
-		{this.state.data.map(function(d) {
-		    return <TreeNode key={this.state.data.id}
-		                         parents={[d.code]}
-			                 data={d} 
-			                 onCategorySelect={this.onSelect} /> 
-		}.bind(this))}
-                </ul>
-                </div>
-		</div>
-        );
+	if (this.state.data) {
+            return (
+		    <div className="panel panel-default">
+                    <div className="panel-body">
+                    <ul className="category-tree">
+		    {this.state.data.map(function(d) {
+			return <TreeNode key={this.state.data.id}
+		        parents={[d.code]}
+			data={d} 
+			onCategorySelect={this.onSelect} /> 
+		    }.bind(this))}
+                    </ul>
+                    </div>
+		    </div>
+            );
+	} else {
+	    return []
+	}
     }
 });
 

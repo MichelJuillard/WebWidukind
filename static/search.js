@@ -242,20 +242,24 @@ var DatasetFacets = React.createClass({displayName: "DatasetFacets",
         }
     },
     render: function() {
-        return (
-		React.createElement("div", {className: "panel panel-default"}, 
-                React.createElement("div", {className: "panel-body"}, 
-                React.createElement("ul", {className: "category-tree"}, 
-		this.state.data.map(function(d) {
-		    return React.createElement(TreeNode, {key: this.state.data.id, 
-		                         parents: [d.code], 
-			                 data: d, 
-			                 onCategorySelect: this.onSelect}) 
-		}.bind(this))
-                )
-                )
-		)
-        );
+	if (this.state.data) {
+            return (
+		    React.createElement("div", {className: "panel panel-default"}, 
+                    React.createElement("div", {className: "panel-body"}, 
+                    React.createElement("ul", {className: "category-tree"}, 
+		    this.state.data.map(function(d) {
+			return React.createElement(TreeNode, {key: this.state.data.id, 
+		        parents: [d.code], 
+			data: d, 
+			onCategorySelect: this.onSelect}) 
+		    }.bind(this))
+                    )
+                    )
+		    )
+            );
+	} else {
+	    return []
+	}
     }
 });
 
