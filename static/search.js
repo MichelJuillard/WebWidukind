@@ -285,7 +285,7 @@ var ButtonDatasetInfos = React.createClass({displayName: "ButtonDatasetInfos",
     },
 
     render: function() {
-	return React.createElement("button", {onClick: this.handleButtonDatasetInfo}, "I");
+	return React.createElement("button", {class: "btn btn-info", onClick: this.handleButtonDatasetInfo}, "I");
     }
 });
 	    
@@ -303,7 +303,7 @@ var ButtonDatasetDownload = React.createClass({displayName: "ButtonDatasetDownlo
     },
 
     render: function() {
-	return React.createElement("button", {onClick: this.handleButtonDatasetDownload}, "D");
+	return React.createElement("button", {class: "btn btn-download", onClick: this.handleButtonDatasetDownload}, "D");
     }
 });
 	    
@@ -320,7 +320,7 @@ var ButtonSeriesDownload = React.createClass({displayName: "ButtonSeriesDownload
     },
 
     render: function() {
-	return React.createElement("button", {onClick: this.handleButtonSeriesDownload}, "D");
+	return React.createElement("button", {class: "btn btn-download", onClick: this.handleButtonSeriesDownload}, "D");
     }
 });
 	    
@@ -345,7 +345,7 @@ var ButtonSeriesPrint = React.createClass({displayName: "ButtonSeriesPrint",
     },
 
     render: function() {
-	return React.createElement("button", {onClick: this.handleButtonSeriesPrint}, "P");
+	return React.createElement("button", {class: "btn btn-print", onClick: this.handleButtonSeriesPrint}, "P");
     }
 });
 	    
@@ -371,7 +371,7 @@ var ButtonSeriesPlot = React.createClass({displayName: "ButtonSeriesPlot",
     },
 
     render: function() {
-	return React.createElement("button", {onClick: this.handleButtonSeriesPlot}, "G");
+	return React.createElement("button", {class: "btn btn-plot", onClick: this.handleButtonSeriesPlot}, "G");
     }
 });
 	    
@@ -531,7 +531,7 @@ var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 	return 	React.createElement("div", null, 
 	    React.createElement("div", null, 
 	    React.createElement("form", null, 
-	    React.createElement("input", {type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
+	    React.createElement("input", {class: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
 	    React.createElement("input", {type: "submit", onClick: this.handleSubmit, value: "Go"})
 	    )
 	    ), 
@@ -603,7 +603,7 @@ var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
 	return React.createElement("div", null, 
 	    React.createElement("div", null, 
 	    React.createElement("form", null, 
-	    React.createElement("input", {type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
+	    React.createElement("input", {class: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
 	    React.createElement("input", {type: "submit", onClick: this.handleSubmitSeries, value: "Go"})
 	    )
 	    ), 
@@ -666,7 +666,7 @@ var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDataset
 	return React.createElement("div", null, 
 	    React.createElement("div", null, 
 	    React.createElement("form", null, 
-	    React.createElement("input", {type: "text", value: this.state.searchString, onChange: this.handleChangeDatasetSeries, placeholder: "Search query ..."}), 
+	    React.createElement("input", {class: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChangeDatasetSeries, placeholder: "Search query ..."}), 
 	    React.createElement("input", {type: "submit", onClick: this.handleSubmitDatasetSeries, value: "Go"})
 	    )
 	    ), 

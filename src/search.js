@@ -285,7 +285,7 @@ var ButtonDatasetInfos = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonDatasetInfo}>I</button>;
+	return <button class="btn btn-info" onClick = {this.handleButtonDatasetInfo}>I</button>;
     }
 });
 	    
@@ -303,7 +303,7 @@ var ButtonDatasetDownload = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonDatasetDownload}>D</button>;
+	return <button class="btn btn-download" onClick = {this.handleButtonDatasetDownload}>D</button>;
     }
 });
 	    
@@ -320,7 +320,7 @@ var ButtonSeriesDownload = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonSeriesDownload}>D</button>;
+	return <button class="btn btn-download" onClick = {this.handleButtonSeriesDownload}>D</button>;
     }
 });
 	    
@@ -345,7 +345,7 @@ var ButtonSeriesPrint = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonSeriesPrint}>P</button>;
+	return <button class="btn btn-print" onClick = {this.handleButtonSeriesPrint}>P</button>;
     }
 });
 	    
@@ -371,7 +371,7 @@ var ButtonSeriesPlot = React.createClass({
     },
 
     render: function() {
-	return <button onClick = {this.handleButtonSeriesPlot}>G</button>;
+	return <button class="btn btn-plot" onClick = {this.handleButtonSeriesPlot}>G</button>;
     }
 });
 	    
@@ -531,7 +531,7 @@ var SearchFormDatasets = React.createClass({
 	return 	<div>
 	    <div>
 	    <form>
-	    <input type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
+	    <input class="search-form" type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
 	    <input type="submit" onClick={this.handleSubmit} value="Go" />
 	    </form>
 	    </div>
@@ -603,7 +603,7 @@ var SearchFormSeries = React.createClass({
 	return <div>
 	    <div>
 	    <form>
-	    <input type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
+	    <input  class="search-form" type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
 	    <input type="submit" onClick={this.handleSubmitSeries} value="Go" />
 	    </form>
 	    </div>
@@ -666,7 +666,7 @@ var SearchFormDatasetSeries = React.createClass({
 	return <div>
 	    <div>
 	    <form>
-	    <input type="text" value={this.state.searchString} onChange={this.handleChangeDatasetSeries} placeholder="Search query ..." />
+	    <input  class="search-form" type="text" value={this.state.searchString} onChange={this.handleChangeDatasetSeries} placeholder="Search query ..." />
 	    <input type="submit" onClick={this.handleSubmitDatasetSeries} value="Go" />
 	    </form>
 	    </div>
