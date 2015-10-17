@@ -193,7 +193,10 @@ def elasticsearch_query_series(query,filter={}):
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
-        results.append({"key": s["key"], "name": s["name"], "provider": s["provider"], "frequency": s["frequency"]})
+        bson = {"key": s["key"], "name": s["name"], "provider": s["provider"]}
+        if s['frequencies']:
+            bson.update({"frequency": s["frequency"]})
+        results.append(bson)
     return results
 
 def form_es_query(query,filter):
