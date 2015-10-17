@@ -242,16 +242,20 @@ var DatasetFacets = React.createClass({
         }
     },
     render: function() {
-            return (
+	var items
+	if (this.state.data.length > 0) { 
+	    items = this.state.data.map(function(d) {
+		return <TreeNode key={d.id}
+		parents={[d.code]}
+		data={d} 
+		onCategorySelect={this.onSelect} /> 
+	    }.bind(this))
+	}
+        return (
 		    <div className="panel panel-default">
                     <div className="panel-body">
                     <ul className="category-tree">
-		    {this.state.data.map(function(d) {
-			return <TreeNode key={d.id}
-		        parents={[d.code]}
-			data={d} 
-			onCategorySelect={this.onSelect} /> 
-		    }.bind(this))}
+		    {items}
                     </ul>
                     </div>
 		    </div>
