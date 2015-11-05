@@ -1,4 +1,4 @@
-db:
+mongodb:
   image: mongo:2.4
   command: mongod --bind_ip 0.0.0.0 --smallfiles --noauth --directoryperdb
 
