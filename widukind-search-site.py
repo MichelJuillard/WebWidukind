@@ -1,8 +1,10 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from flask import Flask, render_template, request, redirect, session, make_response, abort, send_from_directory
 from flask.ext.cors import CORS
 from dlstats import configuration
 import pymongo
-from elasticsearch import Elasticsearch
 import os
 import pandas
 import io
@@ -12,12 +14,27 @@ from collections import OrderedDict
 import datetime
 from bson import json_util
 
-client = pymongo.MongoClient(**configuration['MongoDB'])
-db = client['widukind']
+from decouple import config as env_config
+
+MONGODB_URL = env_config('MONGODB_URL', 'mongodb://localhost/widukind')
+ES_URL = env_config('ES_URL', 'http://localhost:9200')
+SECRET_KEY = env_config('SECRET_KEY', 'very very secret key key key')
+
+def get_es_client():
+    from elasticsearch import Elasticsearch
+    from urllib.parse import urlparse
+    url = urlparse(ES_URL)
+    es = Elasticsearch([{"host":url.hostname, "port":url.port}])
+    return es
+
+client = pymongo.MongoClient(MONGODB_URL)
+db = client.get_default_database()
+
+es = get_es_client()
 
 app = Flask(__name__)
 app.debug = True
-app.config['SECRET_KEY'] = 'very very secret key key key'
+app.config['SECRET_KEY'] = SECRET_KEY
 #app.secret_key = os.urandom(24)
 cors = CORS(app)
 
@@ -30,7 +47,6 @@ def dataset_facets():
     provider = request.args.get('provider')
     code = request.args.get('code')
     filter = {'provider': provider, 'datasetCode': code}
-    es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
     s  = res['hits']['hits'][0]["_source"]
     facets = []
@@ -122,7 +138,6 @@ def REST_series():
 def dataset_info():
     code = request.args.get('code')
     filter = {'datasetCode': code}
-    es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
     s  = res['hits']['hits'][0]["_source"]
     print(s)
@@ -150,7 +165,6 @@ def dataset_info():
     return html
 
 def elasticsearch_query_datasets(query={},filter={}):
-    es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query(query,filter))
     results = []
     for hit in res['hits']['hits']:
@@ -165,7 +179,6 @@ def elasticsearch_query_datasets(query={},filter={}):
     return results
 
 def elasticsearch_get_dataset(datasetCode):
-    es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body={"filter": {"term": {'datasetCode': datasetCode}}})
     if len(res['hits']['hits']):
         print(res['hits']['hits'][0]['_source'])
@@ -188,7 +201,6 @@ def mongodb_dataset_by_code(code):
     return series
     
 def elasticsearch_query_series(query,filter={}):
-    es = Elasticsearch(host = "localhost")
     res = es.search(index = 'widukind', doc_type = 'series', size=20, body=form_es_query(query,filter))
     results = []
     for hit in res['hits']['hits']:
