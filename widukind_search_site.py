@@ -3,7 +3,6 @@
 
 from flask import Flask, render_template, request, redirect, session, make_response, abort, send_from_directory
 from flask.ext.cors import CORS
-from dlstats import configuration
 import pymongo
 import os
 import pandas
