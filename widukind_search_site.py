@@ -16,9 +16,9 @@ from bson import json_util
 
 from decouple import config as env_config
 
-MONGODB_URL = env_config('MONGODB_URL', 'mongodb://localhost/widukind')
-ES_URL = env_config('ES_URL', 'http://localhost:9200')
-SECRET_KEY = env_config('SECRET_KEY', 'very very secret key key key')
+MONGODB_URL = env_config('WIDUKIND_MONGODB_URL', 'mongodb://localhost/widukind')
+ES_URL = env_config('WIDUKIND_ES_URL', 'http://localhost:9200')
+SECRET_KEY = env_config('WIDUKIND_SECRET_KEY', 'very very secret key key key')
 DEBUG = env_config('WIDUKIND_DEBUG', False, cast=bool)
 
 def get_es_client():
