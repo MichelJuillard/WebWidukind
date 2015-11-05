@@ -19,6 +19,7 @@ from decouple import config as env_config
 MONGODB_URL = env_config('MONGODB_URL', 'mongodb://localhost/widukind')
 ES_URL = env_config('ES_URL', 'http://localhost:9200')
 SECRET_KEY = env_config('SECRET_KEY', 'very very secret key key key')
+DEBUG = env_config('WIDUKIND_DEBUG', False, cast=bool)
 
 def get_es_client():
     from elasticsearch import Elasticsearch
@@ -544,7 +545,7 @@ def get_values(provider,dataset_code):
     return json_util.dumps(db.series.find(query,{'releaseDates':0,'revisions':0,'attributes':0}), default=json_util.default)
 
 def main():    
-    app.debug = True
+    app.debug = DEBUG
     app.run()
 
 if __name__ == '__main__':
