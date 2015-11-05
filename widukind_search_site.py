@@ -543,8 +543,9 @@ def get_values(provider,dataset_code):
         query['dimensions.'+r[0]] = {'$regex': r[1][0]};
     return json_util.dumps(db.series.find(query,{'releaseDates':0,'revisions':0,'attributes':0}), default=json_util.default)
 
-    
-        
-if __name__ == '__main__':
+def main():    
     app.debug = True
     app.run()
+
+if __name__ == '__main__':
+    main()
