@@ -37,7 +37,7 @@ app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 #app.secret_key = os.urandom(24)
-cors = CORS(app)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/facefiles/<file>')
 def facefiles(file):
