@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM python:3.4.3
 
 MAINTAINER <stephane.rault@radicalspam.org>
 
@@ -6,38 +6,29 @@ ENV PORT 8080
 ENV WIDUKIND_MONGODB_URL mongodb://mongodb/widukind
 ENV WIDUKIND_ES_URL http://es:9200
 
-RUN \
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C3173AA6 C300EE8C 7F0CEB10 561F9B9CAC40B2F7 5862E31D && \
-  apt-get update && \
-  apt-get install -y --no-install-recommends apt-transport-https ca-certificates && \
-  echo 'deb http://ppa.launchpad.net/nginx/stable/ubuntu trusty main' > /etc/apt/sources.list.d/nginx-stable-trusty.list && \
-  apt-get -y update
+RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+RUN echo "deb http://nginx.org/packages/mainline/debian/ jessie nginx" >> /etc/apt/sources.list
 
+ENV NGINX_VERSION 1.9.6-1~jessie
+
+RUN apt-get update
+    
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-  build-essential \
-  git \
-  curl \
-  language-pack-en \
-  python3-dev \
-  cython3 \
-  nginx \
-  python3-lxml \
-  python3-pandas
+  ca-certificates \
+  nginx=${NGINX_VERSION}
   
 ENV PATH /usr/local/bin:${PATH}
 ENV LANG en_US.UTF-8
-
-RUN pip3 install -U pip
 
 ADD . /code/
 
 WORKDIR /code/
 
-RUN pip3 install https://github.com/Supervisor/supervisor/tarball/master
+RUN pip install https://github.com/Supervisor/supervisor/tarball/master
 
-RUN pip3 install gunicorn
+RUN pip install gunicorn
 
-RUN pip3 install -e .
+RUN pip install -e .
 
 RUN mkdir -p /etc/supervisor/conf.d /var/log/supervisor
 ADD docker/supervisord.conf /etc/supervisor/
