@@ -17,6 +17,7 @@ from decouple import config as env_config
 
 MONGODB_URL = env_config('WIDUKIND_MONGODB_URL', 'mongodb://localhost/widukind')
 ES_URL = env_config('WIDUKIND_ES_URL', 'http://localhost:9200')
+ES_INDEX = env_config('WIDUKIND_ES_INDEX', 'widukind')
 SECRET_KEY = env_config('WIDUKIND_SECRET_KEY', 'very very secret key key key')
 DEBUG = env_config('WIDUKIND_DEBUG', False, cast=bool)
 
@@ -47,7 +48,7 @@ def dataset_facets():
     provider = request.args.get('provider')
     code = request.args.get('code')
     filter = {'provider': provider, 'datasetCode': code}
-    res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
+    res = es.search(index = ES_INDEX, doc_type = 'datasets', size=20, body=form_es_query({},filter))
     s  = res['hits']['hits'][0]["_source"]
     facets = []
     id = 1
@@ -137,7 +138,7 @@ def REST_series():
 def dataset_info():
     code = request.args.get('code')
     filter = {'datasetCode': code}
-    res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query({},filter))
+    res = es.search(index = ES_INDEX, doc_type = 'datasets', size=20, body=form_es_query({},filter))
     s  = res['hits']['hits'][0]["_source"]
     print(s)
     html =  "<div><table>" 
@@ -164,7 +165,7 @@ def dataset_info():
     return html
 
 def elasticsearch_query_datasets(query={},filter={}):
-    res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body=form_es_query(query,filter))
+    res = es.search(index = ES_INDEX, doc_type = 'datasets', size=20, body=form_es_query(query,filter))
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
@@ -178,7 +179,7 @@ def elasticsearch_query_datasets(query={},filter={}):
     return results
 
 def elasticsearch_get_dataset(datasetCode):
-    res = es.search(index = 'widukind', doc_type = 'datasets', size=20, body={"filter": {"term": {'datasetCode': datasetCode}}})
+    res = es.search(index = ES_INDEX, doc_type = 'datasets', size=20, body={"filter": {"term": {'datasetCode': datasetCode}}})
     if len(res['hits']['hits']):
         print(res['hits']['hits'][0]['_source'])
         return res['hits']['hits'][0]['_source']
@@ -197,7 +198,7 @@ def mongodb_dataset_by_code(code):
     return series
     
 def elasticsearch_query_series(query,filter={}):
-    res = es.search(index = 'widukind', doc_type = 'series', size=20, body=form_es_query(query,filter))
+    res = es.search(index = ES_INDEX, doc_type = 'series', size=20, body=form_es_query(query,filter))
     results = []
     for hit in res['hits']['hits']:
         s = hit["_source"]
