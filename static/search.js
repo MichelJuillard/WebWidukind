@@ -1,4 +1,7 @@
+/*
 var widukind_root = 'http://widukind.cepremap.org';
+*/
+var widukind_root = '';
 var FrequencyFacets = React.createClass({displayName: "FrequencyFacets",
     getInitialState: function() {
 	return { data: [{id: "Year", code: "a", selected: false},
