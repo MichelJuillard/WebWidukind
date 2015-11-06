@@ -88,8 +88,7 @@ def dataset_facets():
 
 @app.route('/provider_facets', methods = ['GET', 'POST'])
 def provider_facets():
-    mb = pymongo.MongoClient(**configuration['MongoDB'])
-    providers = mb.widukind.providers.find()
+    providers = db.providers.find()
     results = []
     for p in providers:
         results.append({'id': p['name'], 'selected': False, 'url': p['website']})
@@ -185,19 +184,16 @@ def elasticsearch_get_dataset(datasetCode):
         return res['hits']['hits'][0]['_source']
 
 def mongodb_series_by_key(key):
-    mb = pymongo.MongoClient(**configuration['MongoDB'])
     print(key)
-    series = mb.widukind.series.find_one({'key': key},{'revisions': 0})
+    series = db.series.find_one({'key': key},{'revisions': 0})
     return series
     
 def mongodb_series_by_filter(filter):
-    mb = pymongo.MongoClient(**configuration['MongoDB'])
-    res = mb.widukind.series.find(filter,{'revisions': 0, 'releaseDates': 0})
+    res = db.series.find(filter,{'revisions': 0, 'releaseDates': 0})
     return res
     
 def mongodb_dataset_by_code(code):
-    mb = pymongo.MongoClient(**configuration['MongoDB'])
-    series = mb.widukind.series.find_one({'datasetCode': code})
+    series = db.series.find_one({'datasetCode': code})
     return series
     
 def elasticsearch_query_series(query,filter={}):
