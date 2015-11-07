@@ -285,7 +285,7 @@ var ButtonDatasetInfos = React.createClass({displayName: "ButtonDatasetInfos",
     },
 
     render: function() {
-	return React.createElement("button", {class: "btn btn-info", onClick: this.handleButtonDatasetInfo}, "I");
+	return React.createElement("button", {className: "btn btn-info", onClick: this.handleButtonDatasetInfo}, "Infos");
     }
 });
 	    
@@ -303,7 +303,7 @@ var ButtonDatasetDownload = React.createClass({displayName: "ButtonDatasetDownlo
     },
 
     render: function() {
-	return React.createElement("button", {class: "btn btn-download", onClick: this.handleButtonDatasetDownload}, "D");
+	return React.createElement("button", {className: "btn btn-download", onClick: this.handleButtonDatasetDownload, title: "Download"}, "CSV");
     }
 });
 	    
@@ -320,7 +320,7 @@ var ButtonSeriesDownload = React.createClass({displayName: "ButtonSeriesDownload
     },
 
     render: function() {
-	return React.createElement("button", {class: "btn btn-download", onClick: this.handleButtonSeriesDownload}, "D");
+	return React.createElement("button", {className: "btn btn-download", onClick: this.handleButtonSeriesDownload, title: "Download datas"}, "CSV");
     }
 });
 	    
@@ -345,7 +345,7 @@ var ButtonSeriesPrint = React.createClass({displayName: "ButtonSeriesPrint",
     },
 
     render: function() {
-	return React.createElement("button", {class: "btn btn-print", onClick: this.handleButtonSeriesPrint}, "P");
+	return React.createElement("button", {className: "btn btn-print", onClick: this.handleButtonSeriesPrint, title: "Print datas"}, "Print");
     }
 });
 	    
@@ -371,7 +371,7 @@ var ButtonSeriesPlot = React.createClass({displayName: "ButtonSeriesPlot",
     },
 
     render: function() {
-	return React.createElement("button", {class: "btn btn-plot", onClick: this.handleButtonSeriesPlot}, "G");
+	return React.createElement("button", {className: "btn btn-plot", onClick: this.handleButtonSeriesPlot, title: "See Plot"}, "Plot");
     }
 });
 	    
@@ -384,8 +384,8 @@ var DatasetsResult = React.createClass({displayName: "DatasetsResult",
 		    React.createElement("div", null, 
 		    React.createElement("tr", null, React.createElement("th", null, "this.props.code")), 
 		    React.createElement("tr", null, 
-		    React.createElement("td", null, this.props.provider), 
-		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}, " ", this.props.name)), 
+		    React.createElement("td", null, React.createElement("span", {className: "provider"}, this.props.provider)), 
+		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase()), className: "link"}, " ", this.props.name)), 
 		    React.createElement("td", null, this.props.frequencies), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
@@ -395,8 +395,8 @@ var DatasetsResult = React.createClass({displayName: "DatasetsResult",
 	} else {
 	    return (
 		    React.createElement("tr", null, 
-		    React.createElement("td", null, this.props.provider), 
-		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}, " ", this.props.name)), 
+		    React.createElement("td", null, React.createElement("span", {className: "provider"}, this.props.provider)), 
+		    React.createElement("td", null, React.createElement("button", {onClick: this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase()), className: "link"}, " ", this.props.name)), 
 		    React.createElement("td", null, this.props.frequencies), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetInfos, {code: this.props.code})), 
 		    React.createElement("td", null, React.createElement(ButtonDatasetDownload, {code: this.props.code}))
@@ -410,7 +410,7 @@ var SeriesResult = React.createClass({displayName: "SeriesResult",
     render: function() {
 	var provider = '';
 	if (this.props.with_provider){
-	    provider = React.createElement("td", null, this.props.provider);
+	    provider = React.createElement("td", null, React.createElement("span", {className: "provider"}, this.props.provider));
 	}
 	return (
 		React.createElement("tr", null, 
@@ -531,7 +531,7 @@ var SearchFormDatasets = React.createClass({displayName: "SearchFormDatasets",
 	return 	React.createElement("div", null, 
 	    React.createElement("div", null, 
 	    React.createElement("form", null, 
-	    React.createElement("input", {class: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
+	    React.createElement("input", {className: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
 	    React.createElement("input", {type: "submit", onClick: this.handleSubmit, value: "Go"})
 	    )
 	    ), 
@@ -603,7 +603,7 @@ var SearchFormSeries = React.createClass({displayName: "SearchFormSeries",
 	return React.createElement("div", null, 
 	    React.createElement("div", null, 
 	    React.createElement("form", null, 
-	    React.createElement("input", {class: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
+	    React.createElement("input", {className: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChange, placeholder: "Search query ..."}), 
 	    React.createElement("input", {type: "submit", onClick: this.handleSubmitSeries, value: "Go"})
 	    )
 	    ), 
@@ -666,7 +666,7 @@ var SearchFormDatasetSeries = React.createClass({displayName: "SearchFormDataset
 	return React.createElement("div", null, 
 	    React.createElement("div", null, 
 	    React.createElement("form", null, 
-	    React.createElement("input", {class: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChangeDatasetSeries, placeholder: "Search query ..."}), 
+	    React.createElement("input", {className: "search-form", type: "text", value: this.state.searchString, onChange: this.handleChangeDatasetSeries, placeholder: "Search query ..."}), 
 	    React.createElement("input", {type: "submit", onClick: this.handleSubmitDatasetSeries, value: "Go"})
 	    )
 	    ), 
@@ -687,24 +687,20 @@ var WidukindSearchDatasets = React.createClass({displayName: "WidukindSearchData
 	
     render: function() {
 	return (
-		React.createElement("div", null, 
-	        React.createElement("div", {id: "banner"}, 
-  		  React.createElement("h1", null, "Widukind search"), 
-		  React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
-		), 
+		React.createElement("div", {className: "wrapper search-datasets"}, 
+	    	React.createElement("div", {id: "banner"}, 
+  				React.createElement("h1", null, "International Economics Database"), 
+				React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+			), 
 
-		React.createElement("div", {id: "main-inner-2"}, 
-		React.createElement("div", {id: "main-inner-1"}, 
-		
-		React.createElement("div", {id: "facets1-2"}, 
-		React.createElement(ProvidersFacets, {handleFilter1: this.handleFilter1})
-		), 
-		React.createElement("div", {id: "results-2"}, 
-		React.createElement(SearchFormDatasets, {handleDatasetSeries: this.props.handleDatasetSeries, filter1: this.state.filter1})
- 		)
-		)
-
-		)
+			React.createElement("div", {className: "main-inner"}, 
+				React.createElement("div", {id: "facets1-2", className: "facets"}, 
+				React.createElement(ProvidersFacets, {handleFilter1: this.handleFilter1})
+				), 
+				React.createElement("div", {id: "results-2", className: "results"}, 
+				React.createElement(SearchFormDatasets, {handleDatasetSeries: this.props.handleDatasetSeries, filter1: this.state.filter1})
+		 		)
+			)
 	    )
 	);
     }
@@ -722,22 +718,21 @@ var WidukindSearchSeries = React.createClass({displayName: "WidukindSearchSeries
 	
     render: function() {
 	return (
-		React.createElement("div", null, 
-	        React.createElement("div", {id: "banner"}, 
-  		React.createElement("h1", null, "Widukind search"), 
-		React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
-		), 
-		React.createElement("div", {id: "main-inner-2"}, 
-		React.createElement("div", {id: "main-inner-1"}, 
-		React.createElement("div", {id: "facets1-2"}, 
-		React.createElement(ProvidersFacets, {handleFilter1: this.handleFilter1})
-		), 
-		React.createElement("div", {id: "results-2"}, 
-		React.createElement(SearchFormSeries, {filter1: this.state.filter1})
- 		)
-		)
-		)
-		)
+		React.createElement("div", {className: "wrapper search-series"}, 
+	    	React.createElement("div", {id: "banner"}, 
+  				React.createElement("h1", null, "International Economics Database"), 
+				React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+			), 
+
+			React.createElement("div", {className: "main-inner"}, 
+				React.createElement("div", {id: "facets1-2", className: "facets"}, 
+				React.createElement(ProvidersFacets, {handleFilter1: this.handleFilter1})
+				), 
+				React.createElement("div", {id: "results-2", className: "results"}, 
+				React.createElement(SearchFormSeries, {filter1: this.state.filter1})
+		 		)
+			)
+	    )
 	);
     }
 });
@@ -757,24 +752,21 @@ var WidukindSearchDatasetSeries = React.createClass({displayName: "WidukindSearc
 	var filters = this.state.filter2;
 	filters.datasetCode = this.props.datasetCode;
 	return (
-		React.createElement("div", null, 
-	        React.createElement("div", {id: "banner"}, 
-  		  React.createElement("h1", null, "Widukind search"), 
-		  React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
-		), 
 
-		React.createElement("div", {id: "main-inner-2"}, 
-		React.createElement("div", {id: "main-inner-1"}, 
-		
-		React.createElement("div", {id: "facets1-2"}, 
-		React.createElement(DatasetFacets, {provider: this.props.provider, code: this.props.datasetCode, onCategorySelect: this.handleFilter2})
-		), 
-		React.createElement("div", {id: "results-2"}, 
-		React.createElement(SearchFormDatasetSeries, {filters: filters})
- 		)
+	    React.createElement("div", {className: "wrapper search-dataset-series"}, 
+	    	React.createElement("div", {id: "banner"}, 
+  				React.createElement("h1", null, "International Economics Database"), 
+				React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+			), 
 
-		)
-		)
+			React.createElement("div", {className: "main-inner"}, 
+				React.createElement("div", {id: "facets1-2", className: "facets"}, 
+				React.createElement(DatasetFacets, {provider: this.props.provider, code: this.props.datasetCode, onCategorySelect: this.handleFilter2})
+				), 
+				React.createElement("div", {id: "results-2", className: "results"}, 
+				React.createElement(SearchFormDatasetSeries, {filters: filters})
+		 		)
+			)
 	    )
 	);
     }
@@ -807,7 +799,7 @@ var Menu = React.createClass({displayName: "Menu",
 
         return (
 	    React.createElement("div", null, 
-		React.createElement("div", {id: "menu"}, 
+		React.createElement("div", {id: "menu", className: "menu"}, 
                 React.createElement("ul", null,  this.props.items.map(function(m, index){
 		    
                     var style = '';
@@ -833,10 +825,24 @@ var Menu = React.createClass({displayName: "Menu",
 var Home = React.createClass({displayName: "Home",
     render: function(){
 	return(
-		React.createElement("div", {id: "homepage"}, 
-		React.createElement("h1", null, "Widukind Search"), 
-		React.createElement("p", null, " You can search either by datasets or by series ")
-		)
+
+		React.createElement("div", {className: "wrapper homepage"}, 
+	    	React.createElement("div", {id: "banner"}, 
+  				React.createElement("h1", null, "International Economics Database"), 
+				React.createElement("p", {className: "lead"}, "A database of international macroeconomic data")
+			), 
+
+			React.createElement("div", {className: "main-inner"}, 
+				React.createElement("div", {className: "home-logos"}, 
+					React.createElement("h2", null, "Partners"), 
+					React.createElement("ul", {className: "logos"}, 
+						React.createElement("li", {className: "logo logo-fs"}, React.createElement("img", {src: "static/logos/logo-fs.png", alt: "France Stratégie"})), 
+						React.createElement("li", {className: "logo logo-cepremap"}, React.createElement("img", {src: "static/logos/logo-cepremap.png", alt: "CEPREMAP"}))
+					)
+				)
+			)
+		
+	    )
 	);
     }
 });
@@ -904,7 +910,10 @@ var App = React.createClass({displayName: "App",
 	    return(
 		    React.createElement("div", null, 
 		    React.createElement(Menu, {items: ['Home', 'Series', 'Datasets'], menuChoice: this.handleChoice}), 
-		    optionalChoice
+		    optionalChoice, 
+		    React.createElement("footer", {className: "main-footer"}, 
+		   		React.createElement("p", {className: "copyright"}, "This software is under ", React.createElement("a", {href: "http://www.gnu.org/licenses/agpl-3.0.en.html"}, "GNU Affero General Public License"))
+		    )
 		)
 	);
     }

@@ -285,7 +285,7 @@ var ButtonDatasetInfos = React.createClass({
     },
 
     render: function() {
-	return <button class="btn btn-info" onClick = {this.handleButtonDatasetInfo}>I</button>;
+	return <button className="btn btn-info" onClick = {this.handleButtonDatasetInfo}>Infos</button>;
     }
 });
 	    
@@ -303,7 +303,7 @@ var ButtonDatasetDownload = React.createClass({
     },
 
     render: function() {
-	return <button class="btn btn-download" onClick = {this.handleButtonDatasetDownload}>D</button>;
+	return <button className="btn btn-download" onClick = {this.handleButtonDatasetDownload} title="Download">CSV</button>;
     }
 });
 	    
@@ -320,7 +320,7 @@ var ButtonSeriesDownload = React.createClass({
     },
 
     render: function() {
-	return <button class="btn btn-download" onClick = {this.handleButtonSeriesDownload}>D</button>;
+	return <button className="btn btn-download" onClick = {this.handleButtonSeriesDownload} title="Download datas">CSV</button>;
     }
 });
 	    
@@ -345,7 +345,7 @@ var ButtonSeriesPrint = React.createClass({
     },
 
     render: function() {
-	return <button class="btn btn-print" onClick = {this.handleButtonSeriesPrint}>P</button>;
+	return <button className="btn btn-print" onClick = {this.handleButtonSeriesPrint} title="Print datas">Print</button>;
     }
 });
 	    
@@ -371,7 +371,7 @@ var ButtonSeriesPlot = React.createClass({
     },
 
     render: function() {
-	return <button class="btn btn-plot" onClick = {this.handleButtonSeriesPlot}>G</button>;
+	return <button className="btn btn-plot" onClick = {this.handleButtonSeriesPlot} title="See Plot">Plot</button>;
     }
 });
 	    
@@ -384,8 +384,8 @@ var DatasetsResult = React.createClass({
 		    <div>
 		    <tr><th>this.props.code</th></tr>
 		    <tr>
-		    <td>{this.props.provider}</td>
-		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}> {this.props.name}</button></td>
+		    <td><span className="provider">{this.props.provider}</span></td>
+		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())} className="link"> {this.props.name}</button></td>
 		    <td>{this.props.frequencies}</td>
 		    <td><ButtonDatasetInfos code={this.props.code} /></td>
 		    <td><ButtonDatasetDownload code={this.props.code} /></td>
@@ -395,8 +395,8 @@ var DatasetsResult = React.createClass({
 	} else {
 	    return (
 		    <tr>
-		    <td>{this.props.provider}</td>
-		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())}> {this.props.name}</button></td>
+		    <td><span className="provider">{this.props.provider}</span></td>
+		    <td><button onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())} className="link"> {this.props.name}</button></td>
 		    <td>{this.props.frequencies}</td>
 		    <td><ButtonDatasetInfos code={this.props.code} /></td>
 		    <td><ButtonDatasetDownload code={this.props.code} /></td>
@@ -410,7 +410,7 @@ var SeriesResult = React.createClass({
     render: function() {
 	var provider = '';
 	if (this.props.with_provider){
-	    provider = <td>{this.props.provider}</td>;
+	    provider = <td><span className="provider">{this.props.provider}</span></td>;
 	}
 	return (
 		<tr>
@@ -531,7 +531,7 @@ var SearchFormDatasets = React.createClass({
 	return 	<div>
 	    <div>
 	    <form>
-	    <input class="search-form" type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
+	    <input className="search-form" type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
 	    <input type="submit" onClick={this.handleSubmit} value="Go" />
 	    </form>
 	    </div>
@@ -603,7 +603,7 @@ var SearchFormSeries = React.createClass({
 	return <div>
 	    <div>
 	    <form>
-	    <input  class="search-form" type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
+	    <input className="search-form" type="text" value={this.state.searchString} onChange={this.handleChange} placeholder="Search query ..." />
 	    <input type="submit" onClick={this.handleSubmitSeries} value="Go" />
 	    </form>
 	    </div>
@@ -666,7 +666,7 @@ var SearchFormDatasetSeries = React.createClass({
 	return <div>
 	    <div>
 	    <form>
-	    <input  class="search-form" type="text" value={this.state.searchString} onChange={this.handleChangeDatasetSeries} placeholder="Search query ..." />
+	    <input className="search-form" type="text" value={this.state.searchString} onChange={this.handleChangeDatasetSeries} placeholder="Search query ..." />
 	    <input type="submit" onClick={this.handleSubmitDatasetSeries} value="Go" />
 	    </form>
 	    </div>
@@ -687,24 +687,20 @@ var WidukindSearchDatasets = React.createClass({
 	
     render: function() {
 	return (
-		<div>
-	        <div id="banner">
-  		  <h1>Widukind search</h1>
-		  <p className="lead">A database of international macroeconomic data</p>
-		</div>
+		<div className="wrapper search-datasets">
+	    	<div id="banner">
+  				<h1>International Economics Database</h1>
+				<p className="lead">A database of international macroeconomic data</p>
+			</div>
 
-		<div id="main-inner-2">
-		<div id="main-inner-1">
-		
-		<div id="facets1-2">
-		<ProvidersFacets handleFilter1={this.handleFilter1} />
-		</div>
-		<div id="results-2">
-		<SearchFormDatasets handleDatasetSeries={this.props.handleDatasetSeries} filter1={this.state.filter1} />
- 		</div>
-		</div>
-
-		</div>
+			<div className="main-inner">
+				<div id="facets1-2" className="facets">
+				<ProvidersFacets handleFilter1={this.handleFilter1} />
+				</div>
+				<div id="results-2" className="results">
+				<SearchFormDatasets handleDatasetSeries={this.props.handleDatasetSeries} filter1={this.state.filter1} />
+		 		</div>
+			</div>
 	    </div>
 	);
     }
@@ -722,22 +718,21 @@ var WidukindSearchSeries = React.createClass({
 	
     render: function() {
 	return (
-		<div>
-	        <div id="banner">
-  		<h1>Widukind search</h1>
-		<p className="lead">A database of international macroeconomic data</p>
-		</div>
-		<div id="main-inner-2">
-		<div id="main-inner-1">
-		<div id="facets1-2">
-		<ProvidersFacets handleFilter1={this.handleFilter1} />
-		</div>
-		<div id="results-2">
-		<SearchFormSeries filter1={this.state.filter1} />
- 		</div>
-		</div>
-		</div>
-		</div>
+		<div className="wrapper search-series">
+	    	<div id="banner">
+  				<h1>International Economics Database</h1>
+				<p className="lead">A database of international macroeconomic data</p>
+			</div>
+
+			<div className="main-inner">
+				<div id="facets1-2" className="facets">
+				<ProvidersFacets handleFilter1={this.handleFilter1} />
+				</div>
+				<div id="results-2" className="results">
+				<SearchFormSeries filter1={this.state.filter1} />
+		 		</div>
+			</div>
+	    </div>
 	);
     }
 });
@@ -757,24 +752,21 @@ var WidukindSearchDatasetSeries = React.createClass({
 	var filters = this.state.filter2;
 	filters.datasetCode = this.props.datasetCode;
 	return (
-		<div>
-	        <div id="banner">
-  		  <h1>Widukind search</h1>
-		  <p className="lead">A database of international macroeconomic data</p>
-		</div>
 
-		<div id="main-inner-2">
-		<div id="main-inner-1">
-		
-		<div id="facets1-2">
-		<DatasetFacets provider={this.props.provider} code={this.props.datasetCode} onCategorySelect={this.handleFilter2} />
-		</div>
-		<div id="results-2">
-		<SearchFormDatasetSeries filters={filters} />
- 		</div>
+	    <div className="wrapper search-dataset-series">
+	    	<div id="banner">
+  				<h1>International Economics Database</h1>
+				<p className="lead">A database of international macroeconomic data</p>
+			</div>
 
-		</div>
-		</div>
+			<div className="main-inner">
+				<div id="facets1-2" className="facets">
+				<DatasetFacets provider={this.props.provider} code={this.props.datasetCode} onCategorySelect={this.handleFilter2} />
+				</div>
+				<div id="results-2" className="results">
+				<SearchFormDatasetSeries filters={filters} />
+		 		</div>
+			</div>
 	    </div>
 	);
     }
@@ -807,7 +799,7 @@ var Menu = React.createClass({
 
         return (
 	    <div>
-		<div id="menu">
+		<div id="menu" className="menu">
                 <ul>{ this.props.items.map(function(m, index){
 		    
                     var style = '';
@@ -833,10 +825,24 @@ var Menu = React.createClass({
 var Home = React.createClass({
     render: function(){
 	return(
-		<div id="homepage">
-		<h1>Widukind Search</h1>
-		<p> You can search either by datasets or by series </p>
-		</div>
+
+		<div className="wrapper homepage">
+	    	<div id="banner">
+  				<h1>International Economics Database</h1>
+				<p className="lead">A database of international macroeconomic data</p>
+			</div>
+
+			<div className="main-inner">
+				<div className="home-logos">
+					<h2>Partners</h2>
+					<ul className="logos">
+						<li className="logo logo-fs"><img src="static/logos/logo-fs.png" alt="France Stratégie" /></li>
+						<li className="logo logo-cepremap"><img src="static/logos/logo-cepremap.png" alt="CEPREMAP" /></li>
+					</ul>
+				</div>
+			</div>
+		
+	    </div>
 	);
     }
 });
@@ -905,6 +911,9 @@ var App = React.createClass({
 		    <div>
 		    <Menu items =  {['Home', 'Series', 'Datasets']} menuChoice = {this.handleChoice} />
 		    {optionalChoice}
+		    <footer className="main-footer">
+		   		<p className="copyright">This software is under <a href="http://www.gnu.org/licenses/agpl-3.0.en.html">GNU Affero General Public License</a></p>
+		    </footer>
 		</div>
 	);
     }
