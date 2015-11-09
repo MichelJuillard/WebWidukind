@@ -1,0 +1,21 @@
+mongodb:
+  image: mongo:2.4
+  command: mongod --bind_ip 0.0.0.0 --smallfiles --noauth --directoryperdb
+
+search:
+  image: elasticsearch:1.6.2
+
+web:
+  build: .
+  environment:
+    WIDUKIND_MONGODB_URL: mongodb://mongodb/widukind
+    WIDUKIND_ES_URL: http://es:9200
+    WIDUKIND_ES_INDEX: widukind
+    WIDUKIND_SECRET_KEY: veryverysecretkeykeykey
+    WIDUKIND_DEBUG: false
+  links:
+    - mongodb:mongodb
+    - search:es
+  ports:
+    - 127.0.0.1:80:80
+
