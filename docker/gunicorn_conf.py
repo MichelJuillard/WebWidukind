@@ -43,7 +43,7 @@ syslog = env_config('WIDUKIND_WEB_SYSLOG', False, cast=bool)
 if syslog:
     #use --link=syslog:syslog
     #tcp://HOST:PORT
-    syslog_addr = env_config('WIDUKIND_WEB_SYSLOG', 'udp://syslog:514')
+    syslog_addr = env_config('WIDUKIND_WEB_SYSLOG_ADDR', 'udp://syslog:514')
 
 
 logconfig = env_config('WIDUKIND_WEB_LOGCONFIG', None)
