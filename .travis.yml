@@ -1,0 +1,42 @@
+sudo: required
+
+language: python
+
+python:
+  - "3.4"
+
+services:
+  - docker
+
+cache:
+  - apt
+  
+env:
+  - MONGO_IMAGE=mongo:2.4 ES_IMAGE=elasticsearch:1.6.2 DOCKER_OPTIONS="-e WIDUKIND_MONGODB_NAME=widukind_test -e WIDUKIND_MONGODB_URL=mongodb://mongodb/widukind_test -e WIDUKIND_ES_URL=http://elasticsearch:9200 -e WIDUKIND_ES_INDEX=widukind_test --link=mongodb:mongodb --link=elasticsearch:elasticsearch --rm"
+
+before_install:
+  - docker pull $MONGO_IMAGE
+  - docker pull $ES_IMAGE
+  - docker run -d --name=mongodb $MONGO_IMAGE mongod --smallfiles --noauth --directoryperdb 
+  - docker run -d --name=elasticsearch $ES_IMAGE
+  #TODO: build d'un docker de test
+  - docker build -t widukind/webwidukind .
+
+-install:
+  - pip install coveralls
+ 
+before_script:
+  - sleep 15
+  - env
+
+script:
+  - docker run $DOCKER_OPTIONS widukind/webwidukind --check-config -c /etc/gunicorn/conf.py widukind_search_site:app
+  
+#after_script: coveralls --verbose
+
+notifications:
+  email: true
+  on_success: always
+  on_failure: always
+
+#TODO: push registry
