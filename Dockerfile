@@ -22,7 +22,7 @@ RUN wget -O /tmp/miniconda3.sh --quiet https://repo.continuum.io/miniconda/Minic
     && conda install python=$PYTHON_RELEASE \
     && conda remove -y pycrypto \
     && conda clean -y -i -l -t -p -s \
-    && conda install -y pandas lxml numpy numexpr Bottleneck beautifulsoup4 xlrd \
+    && conda install -y pandas numpy numexpr Bottleneck \
     && rm -f /tmp/miniconda3.sh
 
 RUN pip install python-decouple gunicorn aiohttp
