@@ -9,6 +9,7 @@
 .coverage
 htmlcov
 docs/_build
+static/search.js
 dist
 build
 TODO.rst
