@@ -1,4 +1,114 @@
 var widukind_root = '';
+
+var CatTreeNode = React.createClass({
+    getInitialState: function() {
+	return { data: [] };
+    },
+    onCategorySelect: function (ev) {
+        if (this.props.onCategorySelect && !this.props.children) {
+            this.props.onCategorySelect(this);
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+    },
+    onChildDisplayToggle: function (ev) {
+        if (this.props.children) {
+            if (this.state.children && this.state.children.length) {
+                this.setState({children: null});
+            } else {
+                this.setState({children: this.props.children});
+            }
+        }
+        ev.preventDefault();
+        ev.stopPropagation();
+    },
+    render: function () {
+        if (!this.state.children){
+	    this.state.children = [];
+	}
+	
+        var classes = React.addons.classSet({
+            'has-children': (this.props.children ? true : false),
+            'open': (this.state.children.length ? true : false),
+            'closed': (this.state.children ? false : true),
+            'selected': (this.state.selected ? true : false)
+        });
+	
+	var item;
+	if (this.props.exposed){
+	    item = <a onClick={this.onCategorySelect} data-id={this.props.code}>
+		{this.props.name}</a>
+	} else {
+	    item = <a onClick={this.onCategorySelect} data-id={this.props.code}>
+		{this.props.name}</a>
+	}	    
+
+        return (
+		<li ref="node" className={classes} key={this.props.key} 
+            onClick={this.onChildDisplayToggle}>
+		{item}		   
+                <ul>
+                    {this.state.children.map(function(child) {
+                        return <CatTreeNode key={child.code}
+			name = {child.name}
+			children={child.children}
+			exposed={child.exposed}
+                        onCategorySelect={this.props.onCategorySelect}/>;
+                    }.bind(this))}
+                </ul>
+            </li>
+        );
+    }
+});    
+    
+var Categories = React.createClass({
+    getInitialState: function() {
+	return { data: [] };
+    },
+
+    componentDidMount: function(props) {
+	    $.get(widukind_root + '/category_tree',
+		  {'provider': this.props.provider, 'code': this.props.code},
+		  function(data){
+		      if (this.isMounted()){
+			  this.setState({data: JSON.parse(data)});
+		      }
+	      }.bind(this));
+    },
+    
+    onSelect: function (node) {
+        if (this.state.selected && this.state.selected.isMounted()) {
+            this.state.selected.setState({selected: false});
+        }
+        this.setState({selected: node});
+        node.setState({selected: true});
+        if (this.props.onCategorySelect) {
+            this.props.onCategorySelect(node);
+        }
+    },
+    
+    render: function() {
+	var item = [];
+	if (this.state.data.length > 0) { 
+	    item = this.state.data.map(function(d) {
+		return <CatTreeNode key={d.code}
+                             name = {d.name}
+	                     children={d.children}
+	                     exposed={d.exposed}
+	                     onCategorySelect={this.onSelect} /> 
+	    }.bind(this))}
+        return (
+		    <div className="panel panel-default">
+                    <div className="panel-body">
+                    <ul className="category-tree">
+		    {item}
+                    </ul>
+                    </div>
+		    </div>
+            );
+    }
+});
+
 var FrequencyFacets = React.createClass({
     getInitialState: function() {
 	return { data: [{id: "Year", code: "a", selected: false},
@@ -847,6 +957,60 @@ var Home = React.createClass({
     }
 });
 
+var ProviderSelection = React.createClass({
+    getInitialState: function(){
+	return { data: []};
+    },
+
+    componentWillMount: function() {
+	$.get(widukind_root + '/providers',
+	      function(data){
+		  this.setState({data: JSON.parse(data)});
+	      }.bind(this));
+    },
+
+    render: function(){
+	var options = this.state.data.map(function(p){
+	    return <option key={p.name} value={p.name}>{p.name}</option>;
+	}.bind(this))
+	return  <select onChange={this.props.handleProvider}>
+	    {options}
+	</select>;
+    }
+});
+			
+var DataTree = React.createClass({
+    getInitialState: function(){
+        return { provider: []};
+    },
+
+    handleProvider: function(p) {
+	this.setState({provider: p.target.value})
+    },
+	
+    render: function(){
+	var categories = '';
+	if (this.state.provider.length > 0){
+	    categories = <Categories provider={this.state.provider} />;
+	}
+	return(
+		<div className="wrapper search-dataset-series">
+	    	<div id="banner">
+  		<h1>International Economics Database</h1>
+		<p className="lead">A database of international macroeconomic data</p>
+		</div>
+		<div className="main-inner">
+		<div id="facets1-2" className="facets">
+		<h2>Provider</h2>
+		<ProviderSelection handleProvider={this.handleProvider} />
+		{categories}
+		</div>
+		</div>
+		</div>
+	);
+    }
+});
+
 var Datasets = React.createClass({
     render: function(){
 	return(
@@ -900,6 +1064,9 @@ var App = React.createClass({
 	case 'DatasetSeries':
 	    optionalChoice = <DatasetSeries datasetCode={self.state.datasetCode} />;
 	    break;
+	case 'Data Tree':
+	    optionalChoice = <DataTree />;
+	    break;
 	case 'Series':
 	    optionalChoice = <Series />;
 	    break;
@@ -909,7 +1076,7 @@ var App = React.createClass({
 
 	    return(
 		    <div>
-		    <Menu items =  {['Home', 'Series', 'Datasets']} menuChoice = {this.handleChoice} />
+		    <Menu items =  {['Home', 'Data Tree', 'Datasets', 'Series' ]} menuChoice = {this.handleChoice} />
 		    {optionalChoice}
 		    <footer className="main-footer">
 		   		<p className="copyright">This software is under <a href="http://www.gnu.org/licenses/agpl-3.0.en.html">GNU Affero General Public License</a></p>
