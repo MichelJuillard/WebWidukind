@@ -12,6 +12,7 @@ from bson.json_util import dumps
 from collections import OrderedDict
 import datetime
 from bson import json_util
+from bson.objectid import ObjectId
 
 from decouple import config as env_config
 
@@ -43,6 +44,43 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 def facefiles(file):
     return send_from_directory('facefiles',file)
 
+@app.route('/category_tree', methods = ['GET', 'POST'])
+def category_tree():
+    provider = request.args.get('provider')
+
+    def walktree1(id):
+        tree = {}
+        cc = db.categories.find_one({'_id': ObjectId(id)})
+        tree['code'] = cc['categoryCode']
+        tree['name'] = cc['name']
+        tree['exposed'] = cc['exposed']
+        tree['docHref'] = ''
+        if 'docRef' in cc:
+            tree['docRef'] = cc['docRef']
+        tree['lastUpdate'] = ''
+        if 'lastUdpate' in cc:
+            tree['lastUpdate'] = cc['lastUpdate']
+        tree['children'] = []
+        for c in cc['children']:
+            tree['children'].append(walktree1(c))
+        return tree
+
+    tree = {}
+    cc = db.categories.find_one({'categoryCode': provider.lower() + '_root'})
+    tree['code'] = cc['categoryCode']
+    tree['name'] = cc['name']
+    tree['exposed'] = cc['exposed']
+    tree['docHref'] = ''
+    if 'docRef' in cc:
+        tree['docRef'] = cc['docRef']
+    if 'lastUdpate' in cc:
+        tree['lastUpdate'] = cc['lastUpdate']
+    tree['children'] = []
+    for c in cc['children']:
+        tree['children'].append(walktree1(c))
+            
+    return dumps([tree])
+    
 @app.route('/dataset_facets', methods = ['GET', 'POST'])
 def dataset_facets():
     provider = request.args.get('provider')
@@ -131,7 +169,6 @@ def REST_series():
     else:
         filter = {}
     results = elasticsearch_query_series(query,filter)
-    print(results)
     return dumps(results)
 
 @app.route('/dataset_info', methods = ['GET', 'POST'])
@@ -140,7 +177,6 @@ def dataset_info():
     filter = {'datasetCode': code}
     res = es.search(index = ES_INDEX, doc_type = 'datasets', size=20, body=form_es_query({},filter))
     s  = res['hits']['hits'][0]["_source"]
-    print(s)
     html =  "<div><table>" 
     html += "<tr><th>Name:</th><td>"+s['name']+"</td></tr>" 
     html += "<tr><th>Code:</th><td>"+code+"</td></tr>" 
@@ -153,7 +189,6 @@ def dataset_info():
     s['codeList'] = cc
     for k in cc:
         html += "<tr><th></th><th>"+k+"</th></tr>"
-        print(cc[k])
         for kk in cc[k]:
             if type(kk) is str:
                 html += "<tr><th></th><td>"+kk+"</td>"
@@ -181,11 +216,9 @@ def elasticsearch_query_datasets(query={},filter={}):
 def elasticsearch_get_dataset(datasetCode):
     res = es.search(index = ES_INDEX, doc_type = 'datasets', size=20, body={"filter": {"term": {'datasetCode': datasetCode}}})
     if len(res['hits']['hits']):
-        print(res['hits']['hits'][0]['_source'])
         return res['hits']['hits'][0]['_source']
 
 def mongodb_series_by_key(key):
-    print(key)
     series = db.series.find_one({'key': key},{'revisions': 0})
     return series
     
@@ -209,7 +242,6 @@ def elasticsearch_query_series(query,filter={}):
     return results
 
 def form_es_query(query,filter):
-    print(query,filter)
     if filter is not None and len(filter):
         filter1 = {}
         filter2 = {}
@@ -224,14 +256,11 @@ def form_es_query(query,filter):
                         filter1[f+'.'+f1] = filter[f][f1]
                     elif type(filter[f][f1]) is list:
                         filter2[f+'.'+f1] = filter[f][f1]
-        print('filter1',filter1)
-        print('filter2',filter2)
         f = []
         for k,v in filter1.items():
             f.extend([{'term': {k:v}}])
         for k,v in filter2.items():
             f.extend([{'terms': {k:v}}])
-        print('f',f)
         if len(f) > 1:
             filters = {'bool': {'must': f}}
         elif len(f) == 1:
@@ -253,7 +282,6 @@ def form_es_query(query,filter):
             es_query = {"filter": filters}
     else:
         es_query = {"query": {"query_string": {"query": query}}}
-    print(es_query)
     return es_query
 
 @app.route('/')
@@ -266,7 +294,6 @@ def facet1():
     req = []
     if 'provider' in request.form.keys():
         req = request.form['provider']
-    print(req)
     return redirect('/')
 
 @app.route('/search_datasets', methods = ['GET','POST'])
@@ -275,9 +302,7 @@ def search_datasets():
         query = request.form['query']
     else:
         query = ''
-    print(query)
     results = elasticsearch_query_datasets(query)
-    print(results)
     session['query'] = query
     session['results'] = results
     return render_template('search_datasets.html')
@@ -292,7 +317,6 @@ def search_series_in_dataset():
     filter = {'datasetCode': datasetCode}
     results = elasticsearch_query_series(query,filter)
     dataset = elasticsearch_get_dataset(datasetCode)
-    print(dataset)
     session['query'] = query
     session['filter'] = filter
     session['results'] = results
@@ -316,7 +340,6 @@ def search_series():
 def print_series():
     key = request.args.get('key')
     series = mongodb_series_by_key(key)
-    print(key,series)
     sd = pandas.Period(ordinal=series['startDate'],freq=series['frequency'])
     html =  "<div><table>" 
     html += "<tr><th>Name:</th><td>"+series['name']+"</td></tr>" 
@@ -354,7 +377,6 @@ def plot_series():
         sd += 1
     html += '"'+str(sd.to_timestamp())+", " + series['values'][-1] + '\\n"'
     html += ");</script></body></html>"
-    print(html)
     return html
 
 @app.route('/download_series', methods = ['GET', 'POST'])
@@ -385,10 +407,8 @@ def download_dataset():
             filter[d1] = {'$in': data.getlist(d)}
         else:
             filter[d] = data[d]
-    print(filter)
     dataset = mongodb_dataset_by_code(filter['datasetCode'])
     series = mongodb_series_by_filter(filter)
-    print(filter,series.count())
     ck = list(dataset['dimensions'].keys())
     cl = sorted(ck, key = lambda t: t.lower())
     headers = ['key']+cl
@@ -459,14 +479,12 @@ def EVIEWS_query_series(provider,dataset_code):
             pDmax = pandas.Period(ordinal=dmax,freq=freq);
             table['dates'] = pandas.period_range(pStartDate,pEndDate,freq=freq).to_native_types()
             init = False
-        print(r['key'])
         if r['frequency'] != freq:
             continue
         if r['startDate'] < dmin:
             dmin = r['startDate']
         if r['endDate'] > dmax:
             dmax = r['endDate']
-        print(r['key'])
         table['vnames'].append(r['key'])
         table['desc'].append(r['name'])
         table['values'].append(r['values'])
