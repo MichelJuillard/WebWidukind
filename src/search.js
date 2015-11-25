@@ -35,8 +35,9 @@ var CatTreeNode = React.createClass({
         });
 	
 	var item;
+	var self = this;
 	if (this.props.exposed){
-	    item = <a onClick={this.onCategorySelect} data-id={this.props.code}>
+	    item = <a onClick={this.props.handleDatasetSeries.bind(null,self.props.provider.toLowerCase(),self.props.code.toLowerCase())} className="link" data-id={this.props.code}>
 		{this.props.name}</a>
 	} else {
 	    item = <a onClick={this.onCategorySelect} data-id={this.props.code}>
@@ -51,9 +52,12 @@ var CatTreeNode = React.createClass({
                     {this.state.children.map(function(child) {
                         return <CatTreeNode key={child.code}
 			name = {child.name}
+			code = {child.code}
 			children={child.children}
 			exposed={child.exposed}
-                        onCategorySelect={this.props.onCategorySelect}/>;
+			provider={this.props.provider}
+                        onCategorySelect={this.props.onCategorySelect}
+			handleDatasetSeries={this.props.handleDatasetSeries}/>;
                     }.bind(this))}
                 </ul>
             </li>
@@ -92,19 +96,24 @@ var Categories = React.createClass({
 	if (this.state.data.length > 0) { 
 	    item = this.state.data.map(function(d) {
 		return <CatTreeNode key={d.code}
-                             name = {d.name}
-	                     children={d.children}
-	                     exposed={d.exposed}
-	                     onCategorySelect={this.onSelect} /> 
+                name = {this.props.provider}
+		code = {d.code}
+	        children={d.children}
+	        exposed={d.exposed}
+		provider={this.props.provider}
+	        onCategorySelect={this.onSelect}
+		handleDatasetSeries={this.props.handleDatasetSeries} /> 
 	    }.bind(this))}
         return (
-		    <div className="panel panel-default">
-                    <div className="panel-body">
-                    <ul className="category-tree">
-		    {item}
-                    </ul>
-                    </div>
-		    </div>
+		<div className="panel panel-default">
+                <div className="panel-body">
+                <ul className="category-tree">
+		<div className="data-tree">
+		{item}
+	    </div>
+		</ul>
+                </div>
+		</div>
             );
     }
 });
@@ -973,7 +982,7 @@ var ProviderSelection = React.createClass({
 	var options = this.state.data.map(function(p){
 	    return <option key={p.name} value={p.name}>{p.name}</option>;
 	}.bind(this))
-	return  <select onChange={this.props.handleProvider}>
+	return  <select className="search-form" onChange={this.props.handleProvider}>
 	    {options}
 	</select>;
     }
@@ -991,7 +1000,7 @@ var DataTree = React.createClass({
     render: function(){
 	var categories = '';
 	if (this.state.provider.length > 0){
-	    categories = <Categories provider={this.state.provider} />;
+	    categories = <Categories provider={this.state.provider} handleDatasetSeries={this.props.handleDatasetSeries}/>;
 	}
 	return(
 		<div className="wrapper search-dataset-series">
@@ -1000,10 +1009,12 @@ var DataTree = React.createClass({
 		<p className="lead">A database of international macroeconomic data</p>
 		</div>
 		<div className="main-inner">
-		<div id="facets1-2" className="facets">
+		<div id="results-2" className="results">
+		<div className="categories">
 		<h2>Provider</h2>
 		<ProviderSelection handleProvider={this.handleProvider} />
 		{categories}
+	        </div>
 		</div>
 		</div>
 		</div>
@@ -1065,7 +1076,7 @@ var App = React.createClass({
 	    optionalChoice = <DatasetSeries datasetCode={self.state.datasetCode} />;
 	    break;
 	case 'Data Tree':
-	    optionalChoice = <DataTree />;
+	    optionalChoice = <DataTree handleDatasetSeries={self.handleDatasetSeries} />;
 	    break;
 	case 'Series':
 	    optionalChoice = <Series />;

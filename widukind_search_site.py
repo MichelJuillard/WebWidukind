@@ -440,6 +440,7 @@ def download_dataset():
             row.append(val)
         for d in pandas.period_range(p_end_date+1,pDmax,freq=freq):
             row.append(None)
+        print(row)
         elements.append(row)
     csv_output = io.StringIO()
     writer = csv.writer(csv_output, quoting=csv.QUOTE_NONNUMERIC)
